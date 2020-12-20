@@ -1,0 +1,19 @@
+{
+  "Users": [
+    {
+      "id": "jcr",
+      "password": "123",
+      "role": "administrador"
+    },
+    {
+      "id": "albano",
+      "password": "123",
+      "role": "produtor"
+    },
+    {
+      "id": "albino",
+      "password": "123",
+      "role": "consumidor"
+    }
+  ]
+}
