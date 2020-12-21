@@ -1,0 +1,36 @@
+extends layout
+
+block content
+    .w3-card-4
+      header.w3-container.w3-teal
+        h3.w3-left Registar utilizador
+    form(action='/users/registar', method='POST')
+            br
+            | Mail: 
+            input(type='text', name='mail', value='')
+            br
+            br
+            | Nome: 
+            input(type='text', name='name', value='')
+            br
+            br
+            | Atividade: 
+            input(type='text', name='activity', value='')
+            br
+            br
+            | Departamento: 
+            input(type='text', name='department', value='')
+            br
+            br
+            | Papel: 
+            input(type='text', name='role', value='')
+            br
+            br
+            | Password: 
+            input(type='text', name='password_enc', value='')
+            br
+            br
+            input(type='submit', value='Adicionar')
+
+
+
