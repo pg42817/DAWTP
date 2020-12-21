@@ -1,9 +1,8 @@
-
 extends layout
 
 block content
-  h1 Pagina protegida
-  p Olá #{utilizador.name} chegaste à homepage... 
+  h1 Pagina do administrador
+  p Olá #{utilizador.id} chegaste à homepage... 
   ul
     li
       a(href="/users/logout") Logout
