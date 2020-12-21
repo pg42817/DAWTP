@@ -3,6 +3,23 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var mongoose = require('mongoose')
+var User = require('../Server/controllers/user')
+
+
+//#region mongoose Configuration
+//Set up default mongoose connection
+var mongoDB = 'mongodb://127.0.0.1/DAW2020';
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
+
+//Get the default connection
+var db = mongoose.connection;
+
+//Bind connection to error event (to get notification of connection errors)
+db.on('error', console.error.bind(console, 'MongoDB connection error...'));
+db.once('open', function () {
+  console.log("Conexão ao MongoDB realizada com sucesso...")
+});
 
 var { v4: uuidv4 } = require('uuid');
 var session = require('express-session');
@@ -14,10 +31,10 @@ var axios = require('axios')
 
 // Configuração da estratégia local
 passport.use(new LocalStrategy(
-  { usernameField: 'id' }, function (username, password, done) {
-    axios.get('http://localhost:7711/users/' + username)
+  { usernameField: 'id' }, function (id, password, done) {
+    User.lookUp(id)
       .then(dados => {
-        const user = dados.data
+        const user = dados
         if (!user) { return done(null, false, { message: 'Utilizador inexistente!\n' }) }
         if (password != user.password) { return done(null, false, { message: 'Credenciais inválidas!\n' }) }
         return done(null, user)
@@ -29,14 +46,14 @@ passport.use(new LocalStrategy(
 // Indica-se ao passport como serializar o utilizador
 passport.serializeUser((user, done) => {
   console.log('Serielização, id: ' + user.id)
-  done(null, user.id)
+  done(null, user.mail)
 })
 
 // Desserialização: a partir do id obtem-se a informação do utilizador
 passport.deserializeUser((uid, done) => {
   console.log('Desserielização, id: ' + uid)
-  axios.get('http://localhost:7711/users/' + uid)
-    .then(dados => done(null, dados.data))
+  User.lookUp(uid)
+    .then(dados => done(null, dados))
     .catch(erro => done(erro, false))
 })
 

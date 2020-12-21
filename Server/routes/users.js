@@ -17,6 +17,13 @@ router.get('/login', function (req, res) {
   res.render('login-form')
 });
 
+router.post('/login', passport.authenticate('local'), function (req, res) {
+  console.log('Na cb do POST login...')
+  console.log('Do form: ' + JSON.stringify(req.body))
+  console.log('Do passport: ' + JSON.stringify(req.user))
+  res.redirect('/protegida')
+});
+
 router.get('/logout', function (req, res) {
   req.logout();
   req.session.destroy(function (err) {
@@ -28,11 +35,15 @@ router.get('/logout', function (req, res) {
   });
 })
 
-router.post('/login', passport.authenticate('local'), function (req, res) {
-  console.log('Na cb do POST login...')
-  console.log('Do form: ' + JSON.stringify(req.body))
-  console.log('Do passport: ' + JSON.stringify(req.user))
-  res.redirect('/protegida')
+router.get('/registar', function (req, res) {
+  res.render('registar')
+});
+
+router.post('/registar', function (req, res) {
+  var user = req.body
+  User.insert(user)
+    .then(data => res.render('login-form'))
+    .catch(err => res.render('error', { error: err }))
 });
 
 router.get('/administrador', function (req, res) {
