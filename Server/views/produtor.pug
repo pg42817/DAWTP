@@ -2,9 +2,13 @@ extends layout
 
 block content
   h1 Pagina do produtor
-  p Olá #{utilizador.name} chegaste à homepage... 
+  p Olá #{utilizador.id} chegaste à homepage... 
   ul
     li
       a(href="/users/logout") Logout
     li
       a(href="/") Homepage
+    li
+      a(href="/users/files") Files
+    li
+      a(href="/users/files/upload") Upload
