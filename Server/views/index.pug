@@ -1,14 +1,18 @@
 extends layout
 
 block content
-  h1 Autenticacao básica NODE js
-  p Chegas-te a homepage... 
-  p
+
+  form.w3-container(action='/users/registar' method='GET')
+    input.w3-btn.w3-right.w3-blue(type="submit" value="Registar")
+
+  form.w3-container(action='users/login' method='GET')
+    input.w3-btn.w3-right.w3-blue(type="submit" value=" Login") 
+
+  br
+  br
+  h1.w3-center Desenvolvimento de Aplicações Web 2020
+
   ul
-    li 
-      a(href="/users/registar") Registar
-    li 
-      a(href="/users/login") Login
     li  
       a(href="/users/administrador") Administrador
     li  

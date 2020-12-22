@@ -15,18 +15,26 @@ module.exports.lookUp = mail=> {
 }
 
 module.exports.insert = user => {
+    data = new Date().toISOString().substr(0,16)
     var newUser = new User(user)
-    console.log(user)
-    console.log(newUser)
+    newUser.data_register=data
+    newUser.data_last_login=data
+    newUser.role="produtor"
     return newUser.save()
 }
 
 module.exports.update = user => {
-    var newUser = new User(user)
-    User.update({"email" : newUser.email}, {$set: { "name" : newUser.name}, "activity": newUser.activity})
-        .exec()
+
+    User.update({"mail" : user.mail },
+    { $set:
+        {
+            "name" : user.name, 
+            "data_last_login": user.data_last_login
+        }
+    }).exec()
+
     return User
-        .findOne({numero: newUser.email})
+        .findOne({numero: user.email})
         .exec()
 }
 
