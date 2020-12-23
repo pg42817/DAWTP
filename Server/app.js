@@ -70,7 +70,6 @@ passport.deserializeUser((uid, done) => {
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-
 var app = express();
 
 //#region session
@@ -83,6 +82,8 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }))
+
+//#endregion
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

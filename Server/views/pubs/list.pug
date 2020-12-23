@@ -1,0 +1,22 @@
+extends layout
+
+block content
+    #display.w3-card-4.modal
+    .w3-container.w3-blue
+        h2 published resources List
+    table.w3-table.w3-bordered
+        tr
+            th Titulo
+            th Autor
+            th Descricao
+            th Data
+            th Tipo
+        each pub in pubs
+            each resource in pub.resources
+                tr(onclick='showImage(' + '"' + resource.id + '"' + ','+ '"' + resource.title + '"' + ',' + '"' + resource.type + '"' + ')')
+                    td #{resource.title}
+                    td #{pub.author}
+                    td #{pub.description}
+                    td #{resource.data_created}
+                    td #{resource.type}
+    .w3-container.w3-blue

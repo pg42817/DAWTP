@@ -19,16 +19,15 @@ module.exports.insert = user => {
     var newUser = new User(user)
     newUser.data_register=data
     newUser.data_last_login=data
-    newUser.role="produtor"
+    newUser.role="consumidor"
     return newUser.save()
 }
 
-module.exports.update = user => {
+module.exports.update_last_login = user => {
 
     User.update({"mail" : user.mail },
     { $set:
         {
-            "name" : user.name, 
             "data_last_login": user.data_last_login
         }
     }).exec()

@@ -5,10 +5,12 @@ block content
   form.w3-container(action='/users/logout' method='GET')
     input.w3-btn.w3-right.w3-blue(type="submit" value="Logout")
 
+
   h1.w3-center Mural
   p.w3-center Olá #{utilizador.name} chegaste à homepage... 
- 
- 
-  ul
+  ul.w3-left
     li
-      a(href="/") Homepage
+      a(href="/users/pubs") Publicações
+    li
+      a(href="/users/pubs/upload") Criar publicações
+

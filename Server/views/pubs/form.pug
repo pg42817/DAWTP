@@ -1,0 +1,48 @@
+extends layout
+
+block content
+    .w3-container.w3-blue
+        h2 Criar publicaçao
+    form.w3-container(action='/users/pubs' method='POST' enctype='multipart/form-data')
+        #1st_File.w3-row.w3-margin-bottom
+            .w3-row.w3-margin-bottom
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Descricao da publicação
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='text' name='description')
+            .w3-row.w3-margin-bottom
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Tema
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='text' name='theme')
+            .w3-row.w3-margin-bottom
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Titulo
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='text' name='title')
+            <div class="w3-row w3-margin-bottom">
+                <div class="w3-col s3">
+                    <label class="w3-text-blue"><b>Visibilidade</b></label>
+                </div>
+                <div class="w3-col s9 w3-border">
+                    <input class="w3-input w3-border w3-light-grey" list="list" name="visibility" id="visibility">
+                    <datalist id="list">
+                        <option value="Privado">
+                        <option value="Público">
+                    </datalist>
+                </div>
+            </div>
+            .w3-row.w3-margin-bottom
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Select file
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='file' name='myFile')
+        #extra_files
+        button.w3-btn.w3-blue-grey(type='button' onclick='extraFiles()') +1 File
+        input.w3-btn.w3-blue-grey(type='submit' value='Submit')
+    footer.w3-container.w3-blue
+        address Gerado por galuno::DAW2020 em #{d}
