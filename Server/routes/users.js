@@ -8,6 +8,9 @@ var path = require('path')
 var passport = require('passport')
 var multer = require('multer');
 const pub = require('../models/pub');
+var archiver = require('archiver')
+var fse = require('fs-extra')
+var CryptoJS = require('crypto-js')
 
 var upload = multer({ dest: 'uploads/' })
 
@@ -48,7 +51,7 @@ router.post('/login', passport.authenticate('local'), function (req, res) {
   console.log('Do form: ' + JSON.stringify(req.body))
   console.log('Do passport: ' + JSON.stringify(req.user))
   res.redirect('/mural')
-}) 
+})
 
 router.get('/logout', function (req, res) {
   req.logout();
@@ -67,8 +70,44 @@ router.get('/logout', function (req, res) {
 
 router.get('/pubs/download/:fname', (req, res) => {
   if (req.isAuthenticated() && (req.user.role == "consumidor" || req.user.role == "produtor" || req.user.role == "adiminstrador")) {
-    let reqPath = path.join(__dirname, '../public/fileStore/', req.params.fname)
-    res.download(reqPath)
+    let filePath = path.join(__dirname, '../public/fileStore/')
+    let zipPath = path.join(__dirname, '../public/fileStore/zip')
+    let bagitPath = zipPath + '/bagit.txt'
+    let manifestPath = zipPath + '/manifest-sha512.txt'
+
+    fse.outputFileSync(bagitPath, 'BagIt-version: 1.0\nTag-File-Character-Encoding: UTF-8')
+
+    let file = fse.readFile(filePath + req.params.fname)
+    let sha512Hash = CryptoJS.SHA512(file).toString()
+    fse.outputFileSync(manifestPath, sha512Hash + ' data/' + req.params.fname)
+    fse.ensureDirSync(zipPath + '/data');
+    fs.copyFile((filePath + req.params.fname), (zipPath + '/data/' + req.params.fname), (err) => {
+      if (err) throw err;
+      console.log(filePath + req.params.fname + ' was copied to ' + zipPath + '/data/' + req.params.fname);
+    });
+
+    var zipname = filePath + 'DIP.zip'
+
+    var archive = archiver('zip');
+
+    archive.on('error', function (err) {
+      throw err;
+    });
+
+    archive.on('end', function () {
+      console.log(archive.pointer() + ' total bytes');
+      console.log('archiver has been finalized and the output file descriptor has closed.');
+      fse.remove(zipPath)
+      fse.remove(filePath + 'DIP.zip')
+    });
+
+    res.attachment(zipname);
+
+    archive.pipe(res);
+
+    archive.directory(zipPath, false);
+
+    archive.finalize();
   }
   else {
     res.send("Nao tens permissoes para aceder a esta pagina")
@@ -92,8 +131,8 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
     var i;
     var recursos = []
     var d = new Date().toISOString().substr(0, 16)
-    author=req.user.mail
-    description=req.body.description
+    author = req.user.mail
+    description = req.body.description
     visibility = req.body.visibility
     //por cada ficheiro, guardar na pasta uploads com o nome original
     for (i = 0; i < req.files.length; i++) {
@@ -103,7 +142,7 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
       fs.rename(oldPath, newPath, function (err) {
         if (err) throw err
       })
-      
+
       if (req.files.length > 1) {
         var theme = req.body.theme[i]
         var title = req.body.title[i]
@@ -112,25 +151,27 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
         var title = req.body.title
       }
 
-      recurso = { "type":req.files[i].mimetype,
-                      "theme":theme,
-                      "title":title,
-                      "data_created":d };
+      recurso = {
+        "type": req.files[i].mimetype,
+        "theme": theme,
+        "title": title,
+        "data_created": d
+      };
       recursos.push(recurso);
     }
     //guardar na BD e mudar nome do ficheiro no repositorio local
-    Pub.insert(author,description,visibility,recursos)
-    .then(dados => {
-      //mudar nome do ficheiro na pasta para o id do ficheiro na bd
-      for (i = 0; i < req.files.length; i++) {
-        let newPath = path.join(__dirname, '../public/fileStore/', dados.resources[i].id)
-        let oldPath = path.join(__dirname, '../public/fileStore/', req.files[i].originalname)
-        fs.rename(oldPath, newPath, function (err) {
-          if (err) throw err
-        })
-      }
-    })
-    .catch(err => res.render('error', { error: err }))
+    Pub.insert(author, description, visibility, recursos)
+      .then(dados => {
+        //mudar nome do ficheiro na pasta para o id do ficheiro na bd
+        for (i = 0; i < req.files.length; i++) {
+          let newPath = path.join(__dirname, '../public/fileStore/', dados.resources[i].id)
+          let oldPath = path.join(__dirname, '../public/fileStore/', req.files[i].originalname)
+          fs.rename(oldPath, newPath, function (err) {
+            if (err) throw err
+          })
+        }
+      })
+      .catch(err => res.render('error', { error: err }))
 
     res.redirect('/users/perfil')
   }
@@ -144,28 +185,26 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
 
 //apresenta os dados do utilizador e as suas publicações
 router.get('/perfil', function (req, res) {
-  mail=req.user.mail
+  mail = req.user.mail
   User.lookUp(mail)
     .then(utilizador => {
       Pub.lookUp(mail)
-      .then(publicacoes => {
+        .then(publicacoes => {
           //se for admin envia a lista de pedidos
-          if(req.user.role=="adiminstrador")
-          {
+          if (req.user.role == "adiminstrador") {
             User.list_pedidos_produtor()
-            .then(pedidos => {
+              .then(pedidos => {
                 console.log(pedidos)
-                res.render('perfil', { utilizador: utilizador, publicacoes, publicacoes, pedidos: pedidos});
-            })
-            .catch(erro => done(erro))
+                res.render('perfil', { utilizador: utilizador, publicacoes, publicacoes, pedidos: pedidos });
+              })
+              .catch(erro => done(erro))
           }
-          else
-          {
+          else {
             var pedidos = "vazio"
-            res.render('perfil', { utilizador: utilizador, publicacoes, publicacoes, pedidos: pedidos});
+            res.render('perfil', { utilizador: utilizador, publicacoes, publicacoes, pedidos: pedidos });
           }
-      })
-      .catch(erro => done(erro))
+        })
+        .catch(erro => done(erro))
     })
     .catch(erro => done(erro))
 
@@ -174,34 +213,34 @@ module.exports = router;
 
 //#region pedido produtor
 router.post('/pedido-produtor/', function (req, res) {
-  mail=req.user.mail
-  User.update_pedir_produtor(mail,"sim")
+  mail = req.user.mail
+  User.update_pedir_produtor(mail, "sim")
     .then(utilizador => {
-        res.end()
+      res.end()
     })
     .catch(erro => done(erro))
 });
 
 //aceitar pedido
 router.post('/aceitar-pedido/:mail', function (req, res) {
-  mail=req.params.mail
-  User.update_pedir_produtor(mail,"nao")
+  mail = req.params.mail
+  User.update_pedir_produtor(mail, "nao")
     .then(utilizador => {
-        User.update_role(mail,"produtor")
-          .then(utilizador => {
-            res.end()
-      })
-      .catch(erro => done(erro))
+      User.update_role(mail, "produtor")
+        .then(utilizador => {
+          res.end()
+        })
+        .catch(erro => done(erro))
     })
     .catch(erro => done(erro))
 });
 
 //recusar pedido
 router.post('/recusar-pedido/:mail', function (req, res) {
-  mail=req.params.mail
-  User.update_pedir_produtor(mail,"nao")
+  mail = req.params.mail
+  User.update_pedir_produtor(mail, "nao")
     .then(utilizador => {
-        res.end()
+      res.end()
     })
     .catch(erro => done(erro))
 });
