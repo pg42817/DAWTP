@@ -6,7 +6,6 @@ var jsonfile = require('jsonfile')
 var fs = require('fs')
 var path = require('path')
 var passport = require('passport')
-
 var multer = require('multer');
 const pub = require('../models/pub');
 
@@ -65,22 +64,9 @@ router.get('/logout', function (req, res) {
 //#endregion
 
 //#region pubs
-router.get('/pubs', function (req, res) {
-  if (req.isAuthenticated() && (req.user.role == "consumidor" || req.user.role == "produtor" || req.user.role == "administrador")) {
-    var d = new Date().toISOString().substr(0, 16)
-    Pub.list()
-    .then(pubs => {
-      res.render('pubs/list', { utilizador: req.user, pubs, d });
-    })
-    .catch(erro => done(erro))
-  }
-  else {
-    res.send("Nao tens permissoes para aceder a esta pagina")
-  }
-});
 
 router.get('/pubs/download/:fname', (req, res) => {
-  if (req.isAuthenticated() && (req.user.role == "consumidor" || req.user.role == "produtor" || req.user.role == "administrador")) {
+  if (req.isAuthenticated() && (req.user.role == "consumidor" || req.user.role == "produtor" || req.user.role == "adiminstrador")) {
     let reqPath = path.join(__dirname, '../public/fileStore/', req.params.fname)
     res.download(reqPath)
   }
@@ -91,7 +77,7 @@ router.get('/pubs/download/:fname', (req, res) => {
 
 
 router.get('/pubs/upload', function (req, res) {
-  if (req.isAuthenticated() && req.user.role == "produtor") {
+  if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "adiminstrador")) {
     var d = new Date().toISOString().substr(0, 16)
     res.render('pubs/form', { utilizador: req.user, d });
   }
@@ -102,14 +88,13 @@ router.get('/pubs/upload', function (req, res) {
 
 
 router.post('/pubs', upload.array('myFile'), function (req, res) {
-  if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
+  if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "adiminstrador")) {
     var i;
-
     var recursos = []
     var d = new Date().toISOString().substr(0, 16)
     author=req.user.mail
     description=req.body.description
-
+    visibility = req.body.visibility
     //por cada ficheiro, guardar na pasta uploads com o nome original
     for (i = 0; i < req.files.length; i++) {
       let newPath = path.join(__dirname, '../public/fileStore/', req.files[i].originalname)
@@ -122,23 +107,19 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
       if (req.files.length > 1) {
         var theme = req.body.theme[i]
         var title = req.body.title[i]
-        var visibility = req.body.visibility[i]
       } else {
         var theme = req.body.theme
         var title = req.body.title
-        var visibility = req.body.visibility
       }
 
       recurso = { "type":req.files[i].mimetype,
                       "theme":theme,
                       "title":title,
-                      "visibility":visibility, 
                       "data_created":d };
       recursos.push(recurso);
     }
-
     //guardar na BD e mudar nome do ficheiro no repositorio local
-    Pub.insert(author,description,recursos)
+    Pub.insert(author,description,visibility,recursos)
     .then(dados => {
       //mudar nome do ficheiro na pasta para o id do ficheiro na bd
       for (i = 0; i < req.files.length; i++) {
@@ -151,7 +132,7 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
     })
     .catch(err => res.render('error', { error: err }))
 
-    res.redirect('/users/pubs')
+    res.redirect('/users/perfil')
   }
   else {
     res.send("Nao tens permissoes para aceder a esta pagina")
@@ -161,5 +142,68 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
 
 //#endregion
 
+//apresenta os dados do utilizador e as suas publicações
+router.get('/perfil', function (req, res) {
+  mail=req.user.mail
+  User.lookUp(mail)
+    .then(utilizador => {
+      Pub.lookUp(mail)
+      .then(publicacoes => {
+          //se for admin envia a lista de pedidos
+          if(req.user.role=="adiminstrador")
+          {
+            User.list_pedidos_produtor()
+            .then(pedidos => {
+                console.log(pedidos)
+                res.render('perfil', { utilizador: utilizador, publicacoes, publicacoes, pedidos: pedidos});
+            })
+            .catch(erro => done(erro))
+          }
+          else
+          {
+            var pedidos = "vazio"
+            res.render('perfil', { utilizador: utilizador, publicacoes, publicacoes, pedidos: pedidos});
+          }
+      })
+      .catch(erro => done(erro))
+    })
+    .catch(erro => done(erro))
+
+});
 module.exports = router;
 
+//#region pedido produtor
+router.post('/pedido-produtor/', function (req, res) {
+  mail=req.user.mail
+  User.update_pedir_produtor(mail,"sim")
+    .then(utilizador => {
+        res.end()
+    })
+    .catch(erro => done(erro))
+});
+
+//aceitar pedido
+router.post('/aceitar-pedido/:mail', function (req, res) {
+  mail=req.params.mail
+  User.update_pedir_produtor(mail,"nao")
+    .then(utilizador => {
+        User.update_role(mail,"produtor")
+          .then(utilizador => {
+            res.end()
+      })
+      .catch(erro => done(erro))
+    })
+    .catch(erro => done(erro))
+});
+
+//recusar pedido
+router.post('/recusar-pedido/:mail', function (req, res) {
+  mail=req.params.mail
+  User.update_pedir_produtor(mail,"nao")
+    .then(utilizador => {
+        res.end()
+    })
+    .catch(erro => done(erro))
+});
+
+//#endregion

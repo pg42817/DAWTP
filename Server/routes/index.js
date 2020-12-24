@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var mural = require('../templates/mural.js')
+var Pub = require('../controllers/pub')
 
 // GET home page. 
 router.get('/', function(req, res, next) {
@@ -8,9 +8,15 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/mural', verificaAutenticacao, function(req, res) {
-  res.writeHead(200,{'Content-Type': 'text/html; charset=utf-8'})
-  res.write(mural.mural(req.user))
-  res.end()
+  mail=req.user.mail
+  role=req.user.role
+
+  Pub.list(mail,role)
+  .then(pubs => {
+    var d = new Date().toISOString().substr(0, 16)
+    res.render('mural', { utilizador: req.user, pubs, d });
+  })
+  .catch(erro => done(erro))
 });
 
 function verificaAutenticacao(req,res,next)

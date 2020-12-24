@@ -1,0 +1,118 @@
+\documentclass[11pt,a4paper]{article}
+%\usepackage[dvipdf]{epsfig}
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
+\usepackage{latexsym}
+%\usepackage[ansinew]{inputenc}
+\usepackage[latin1]{inputenc}
+\usepackage[portuges]{babel}
+\usepackage{color}
+\usepackage{times}
+\usepackage{xspace}
+\usepackage{graphicx}
+
+\newcommand{\cao}{\c c\~ ao\xspace}
+\newcommand{\ao}{\~ ao\xspace}
+\newcommand{\coes}{\c c\~ oes\xspace}
+\newcommand{\oes}{\~ oes\xspace}
+\newcommand{\ii}{\'\i}
+%%%%%%%%%%%%%
+
+\hoffset -0.7in \voffset -1.2in
+\addtolength{\textwidth}{4cm}
+\addtolength{\textheight}{5cm}
+\theoremstyle{remark}\newtheorem{exo}{Exerc\ii cio}
+%%%%%%%%%%%%%
+
+\definecolor{cinz}{cmyk}{0,0,0,.3}
+
+\def\RR{\mathbb R}
+\def\QQ{\mathbb Q}
+\def\NN{\mathbb N}
+\def\ZZ{\mathbb Z}
+
+\def\p{{\rm P}}
+
+\def\cc{{\cal C}}
+
+\DeclareMathOperator{\sen}{sen}
+\DeclareMathOperator{\tg}{tg}
+\DeclareMathOperator{\cotg}{cotg}
+\DeclareMathOperator{\agsh}{argsh}
+\DeclareMathOperator{\ch}{ch}
+\DeclareMathOperator{\sh}{sh}
+\DeclareMathOperator{\as}{arcsen}
+\DeclareMathOperator{\ac}{arccos}
+\DeclareMathOperator{\atg}{arctg}
+\DeclareMathOperator{\act}{arccotg}
+
+\newcommand{\dps}{\displaystyle}
+
+\def\var{{\textcolor{red}{$\bigstar\;$}}}
+\def\fbox {\framebox[0.5cm]
+          {\begin{minipage}{0.2cm} {
+          \vspace*{0.2cm}}\end{minipage}}}
+%%%%%%%%%%%%%
+
+\begin{document}
+\baselineskip=1.5em
+\pagestyle{empty}
+
+%%%%%%%%%%%%%
+%%%%%%%%%%%%%
+
+\noindent
+\begin{tabular}{l}
+{\sf Universidade do Minho (DMA)}  \hspace*{4cm} Machine Learning:: Fundamental and Application \\
+{\sf janeiro 2019}     \hspace*{9cm}
+\textcolor{cinz} {\Large{\sf Teste ML::FA}}  \\ \\
+{\sf Nome} \hrulefill   \\  \\
+{\sf N\'umero}    \hrulefill  {\sf Curso}    \hrulefill  \\[1em]
+\hfill {\bf Os c\'alculos podem ser realizados com o apoio de python.}\hfill .\\
+\end{tabular}
+\medskip
+
+O objetivo deste trabalho \'e o estudo de diversas m\'etricas para comparar imagens. Uma imagem $x=(x_1,\cdots,x_I)$ \'e constituida de pixels $i$ cuja intensidade luminosa vale $x_i\in[0,1]$ ($x_i=0$ corresponde ao preto e $x_i=1$ ao branco). Neste estudo, $I=16$ e os pixels s\ao organizados como indicado na figura. Do lado esquerdo, visualizamos a imagem e do lado direito, a tabela das intensidades correspondentes.
+\begin{figure}[ht]\centering \includegraphics[height=8cm]{./pixel.pdf}\end{figure}
+
+\noindent \textbf{Parte A.}\\
+Sejam duas imagens $x$ e $x'$, definimos a dissemelhan\c ca 
+$$
+d(x,x)=\frac{1}{I}\sum_{i=1}^I|x_i-x_i'|.
+$$
+1) Calcular $d(x^1,x^2)$.\\
+2) Mostrar que $0\leq d(x,x')\leq 1$. Mostrar que $d(x,x')=0 \Leftrightarrow x=x'$.\\
+3) Propor duas imagens tais como $d(x,x')=1$.\\
+4) Mostrar que $d(x,x')\leq d(x,x'')+d(x'',x')$ onde $x''$ \'e uma terceira imagem.\\
+
+
+\noindent \textbf{Parte B.}\\
+Definimos duas t\'ecnicas de manipula\cao das imagens $mx=m(x,x')$ e $Mx=M(x,x')$ onde
+$$
+mx_i=\min(x_i,x_i'),\quad Mx_i=\max(x_i,x_i'),\quad i=1,\cdots I.
+$$
+A imagem diferencial \'e ent\ao dada por $\Delta =\Delta(x,x')=M(x,x')-m(x,x')$ Sejam
+$$
+\Delta_i=Mx_i-mx_i,\qquad i=1,\cdots,I.
+$$
+1) Mostrar que $\Delta$ \'e uma imagem, ou seja, que temos sempre  $\Delta_i\in [0,1]$.\\
+2) Determinar as imagens $m(x^1,x2)$ e $M(x^1,x^2)$. Deduzir a imagem diferencial $\Delta(x,x')$, (express\ao das intensidades numa tabela.)\\
+3) Demonstrar que $d(m(x,x'),M(x,x'))=d(x,x')$.\\
+
+\noindent \textbf{Parte C.}\\
+A imagem diferencial n\ao permite identificar estruturas semelhantes entre duas imagens. Por isso introduzimos uma nova metrica. Para um pixel $i$, notamos por $V_i$ a vizinhan\c ca constituida pelos pixels adjacentes a $i$. Por exemplo $V_1=\{2,5\}$, $V_6=\{2,5,7,10\}$, $V_{15}=\{11,14,16\}$. Notamos por $|V_i|$ o n\'umero de elementos de $V_1$.\\
+Definimos o \ii ndice de contraste $y$ como 
+$$
+y_i=\frac{1}{|V_i|}\sum_{j\in V_i} |x_j-x_i|, \quad i=1,\cdots,I.
+$$
+Logo definimos a diverg\^encia de contraste entre $x$ e $x'$ como $d_C(x,x')=d(y,y')$ onde $y$ e $y'$ s\ao os \ii ndices de contrastes de $x$ e $x'$, respetivemente. \\
+1) Mostrar que $y$ \'e uma imagem, seja $y_i\in [0,1]$.\\
+2) Determinar $y^1$ e $y^2$. Deduzir $d_C(x^1,x^2)$ e concluir.\\
+3) Determinar $y^3$, $y^4$ e $d_C(x^3,x^4)$. Conclus\oes? \\
+4) Se $d_C(x,x)=0$, temos que $x=x'$?
+
+
+\end{document}
+
+%%%%%%%%%%%%%
+% end of file
+%%%%%%%%%%%%%

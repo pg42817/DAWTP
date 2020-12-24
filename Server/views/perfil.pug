@@ -1,0 +1,110 @@
+extends layout
+
+block content
+    <div>
+        form.w3-container(action='/users/logout' method='GET')
+            input.w3-btn.w3-right.w3-right.w3-blue-grey(type='submit' value='Logout')
+        form.w3-container(action='/mural'  method='GET')
+            input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Mural')
+        if utilizador.role=="adiminstrador" || utilizador.role=="produtor"
+            form.w3-container(action='/users/pubs/upload'  method='GET')
+                input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Criar publicação')
+        if utilizador.role=="consumidor" && utilizador.pedido_produtor=="nao"   
+            input#botao-pedido.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Tornar-me produtor')(onclick='pedir_produtor(' + '"botao-pedido' + '"' + ')')
+    </div>
+    .w3-row.w3-margin-bottom
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Name
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='text' name='name' value=utilizador.name readonly="readonly")
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Email
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='text' name='mail' value=utilizador.mail readonly="readonly")
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Atividade
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='text' name='activity' value=utilizador.ativity readonly="readonly")
+                .w3-col.s3
+                    label.w3-text-blue
+                        b curso
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='text' name='course' value=utilizador.course readonly="readonly")
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Departamento
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='text' name='department' value=utilizador.department readonly="readonly")
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Papel
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='text' name='role' value=utilizador.role readonly="readonly")
+
+    #display.w3-card-4.modal
+    .w3-container.w3-blue
+        h2.w3-center Lista de publicaçoes pessoais
+    
+    each pub in publicacoes
+        .card
+            .w3-row.w3-margin-bottom
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Autor
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='text' name='author' value=pub.author readonly="readonly")
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Descrição
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='text' name='description' value=pub.description readonly="readonly")
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Recursos
+            each recurso in pub.resources   
+                    .w3-col.s3
+                        label.w3-text-blue
+                        b Titulo
+                    .w3-col.s9.w3-border
+                        input.w3-input.w3-border.w3-light-grey(type='text' name='title' value=recurso.title readonly="readonly")(onclick='showImage(' + '"' + recurso.id + '"' + ','+ '"' + recurso.title + '"' + ',' + '"' + recurso.type + '"' + ')')
+                    .card-block
+            .w3-col.s3
+                    label.w3-text-blue
+                        <br>
+                        <br>
+
+    #display.w3-card-4.modal
+    .w3-container.w3-blue
+    if pedidos!="vazio" 
+        .w3-container.w3-blue
+            h2.w3-center Lista de pedidos de produtores
+        table#tabela_pedidos.w3-table.w3-bordered
+            tr
+                th Nome
+                th Curso
+                th Departamento
+                th Atividade
+                th
+                th
+            each pedido in pedidos
+                <tr id=#{pedido.mail}>
+                    td #{pedido.name}
+                    td #{pedido.course}
+                    td #{pedido.department}
+                    td #{pedido.activity}
+                    td 
+                        input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Aceitar')(onclick='aceitar_pedido(' + '"' + pedido.mail + '"' + ')')
+                    td
+                        input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Recusar')(onclick='recusar_pedido(' + '"' + pedido.mail + '"' + ')')
+                </td>
+    else
+        .w3-container.w3-blue
+            h2.w3-center Não existem pedidos de produtores
+
+    #coisa
+
+
+    
