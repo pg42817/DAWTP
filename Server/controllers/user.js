@@ -27,6 +27,7 @@ module.exports.insert = user => {
     newUser.data_register=data
     newUser.data_last_login=data
     newUser.role="consumidor"
+    newUser.pedido_produtor="nao"
     return newUser.save()
 }
 
