@@ -21,19 +21,10 @@ module.exports.list = (mail,role) => {
     {
         return Pub
         .find()
-        .where('visibility').equals('Público')
-        .sort({author:1})
-        .exec()
-
-       /* pub2=Pub
-        .find()
         .where('visibility').equals('Privado')
         .where('author').equals(mail)
         .sort({author:1})
         .exec()
-    */
-
-
     }
     if(role=="consumidor")
     {
@@ -43,6 +34,15 @@ module.exports.list = (mail,role) => {
         .sort({author:1})
         .exec()
     }
+}
+
+//funçao para complementar o list dos produtores
+module.exports.list_aux = (mail) => {
+    return Pub
+    .find( { 'author': { $ne: 'author' } } )
+    .where('visibility').equals('Público')
+    .sort({author:1})
+    .exec()
 }
 
 
