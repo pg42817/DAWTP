@@ -1,4 +1,4 @@
-function showImage(id,extensao, name) {
+function showImage(id,extensao,autor,name) {
     console.log(name + '.' + extensao)
     if (extensao == 'image/png' || extensao == 'image/jpeg')
         var ficheiro = '<img src="/fileStore/' + id+ '" width="80%"/>'
@@ -17,7 +17,7 @@ function showImage(id,extensao, name) {
         </div>
     `)
     
-    var download = $('<div><a href="/users/pubs/download/' + id + '.' + extensao+ '">Download</a></div>')
+    var download = $('<div><a href="/users/pubs/download/' + id + '.' + extensao+ '/' + autor + '">Download</a></div>')
     $("#display").empty()
     $("#display").append(fileObj, download)
     $("#display").modal()

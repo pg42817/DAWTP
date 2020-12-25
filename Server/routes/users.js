@@ -70,9 +70,9 @@ router.get('/logout', function (req, res) {
 
 //#region pubs
 
-router.get('/pubs/download/:fname', (req, res) => {
+router.get('/pubs/download/:fname/:autor', (req, res) => {
   if (req.isAuthenticated() && (req.user.role == "consumidor" || req.user.role == "produtor" || req.user.role == "administrador")) {
-    let filePath = path.join(__dirname, '../public/fileStore/', req.user.mail, '/')
+    let filePath = path.join(__dirname, '../public/fileStore/', req.params.autor, '/')
     let zipPath = path.join(__dirname, '../public/fileStore/zip')
     let bagitPath = zipPath + '/bagit.txt'
     let manifestPath = zipPath + '/manifest-sha512.txt'
