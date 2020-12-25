@@ -10,7 +10,9 @@ var multer = require('multer');
 const pub = require('../models/pub');
 var archiver = require('archiver')
 var fse = require('fs-extra')
+var mime = require('mime-types')
 var CryptoJS = require('crypto-js')
+
 
 var upload = multer({ dest: 'uploads/' })
 
@@ -70,7 +72,7 @@ router.get('/logout', function (req, res) {
 
 router.get('/pubs/download/:fname', (req, res) => {
   if (req.isAuthenticated() && (req.user.role == "consumidor" || req.user.role == "produtor" || req.user.role == "administrador")) {
-    let filePath = path.join(__dirname, '../public/fileStore/')
+    let filePath = path.join(__dirname, '../public/fileStore/', req.user.mail, '/')
     let zipPath = path.join(__dirname, '../public/fileStore/zip')
     let bagitPath = zipPath + '/bagit.txt'
     let manifestPath = zipPath + '/manifest-sha512.txt'
@@ -130,6 +132,7 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
   if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
     var i;
     var recursos = []
+    var extensoes = []
     var d = new Date().toISOString().substr(0, 16)
     author = req.user.mail
     description = req.body.description
@@ -143,6 +146,9 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
         if (err) throw err
       })
 
+      //save extension file
+      extensoes[i] = mime.extension(req.files[i].mimetype);
+
       if (req.files.length > 1) {
         var theme = req.body.theme[i]
         var title = req.body.title[i]
@@ -155,7 +161,8 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
         "type": req.files[i].mimetype,
         "theme": theme,
         "title": title,
-        "data_created": d
+        "data_created": d,
+        "extension": extensoes[i]
       };
       recursos.push(recurso);
     }
@@ -164,7 +171,15 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
       .then(dados => {
         //mudar nome do ficheiro na pasta para o id do ficheiro na bd
         for (i = 0; i < req.files.length; i++) {
-          let newPath = path.join(__dirname, '../public/fileStore/', dados.resources[i].id)
+          var file_name= dados.resources[i].id + '.'+ extensoes[i]
+          
+          dir=path.join(__dirname, '../public/fileStore/', author)
+          console.log(dir)
+          if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir);
+        }
+
+          let newPath = path.join(dir, file_name)
           let oldPath = path.join(__dirname, '../public/fileStore/', req.files[i].originalname)
           fs.rename(oldPath, newPath, function (err) {
             if (err) throw err
