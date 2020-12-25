@@ -6,13 +6,18 @@ block content
             input.w3-btn.w3-right.w3-right.w3-blue-grey(type='submit' value='Logout')
         form.w3-container(action='/mural'  method='GET')
             input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Mural')
-        if utilizador.role=="adiminstrador" || utilizador.role=="produtor"
+        if utilizador.role=="administrador" || utilizador.role=="produtor"
             form.w3-container(action='/users/pubs/upload'  method='GET')
                 input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Criar publicação')
+        if utilizador.role=="administrador" || utilizador.role=="administrador"
+            form.w3-container(action='/users/pedidos'  method='GET')
+                input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Pedidos para produtores')
         if utilizador.role=="consumidor" && utilizador.pedido_produtor=="nao"   
             input#botao-pedido.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Tornar-me produtor')(onclick='pedir_produtor(' + '"botao-pedido' + '"' + ')')
     </div>
     .w3-row.w3-margin-bottom
+                .w3-container.w3-blue
+                    h2.w3-center Dados Pessoais
                 .w3-col.s3
                     label.w3-text-blue
                         b Name
@@ -76,35 +81,6 @@ block content
                         <br>
                         <br>
 
-    #display.w3-card-4.modal
-    .w3-container.w3-blue
-    if pedidos!="vazio" 
-        .w3-container.w3-blue
-            h2.w3-center Lista de pedidos de produtores
-        table#tabela_pedidos.w3-table.w3-bordered
-            tr
-                th Nome
-                th Curso
-                th Departamento
-                th Atividade
-                th
-                th
-            each pedido in pedidos
-                <tr id=#{pedido.mail}>
-                    td #{pedido.name}
-                    td #{pedido.course}
-                    td #{pedido.department}
-                    td #{pedido.activity}
-                    td 
-                        input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Aceitar')(onclick='aceitar_pedido(' + '"' + pedido.mail + '"' + ')')
-                    td
-                        input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Recusar')(onclick='recusar_pedido(' + '"' + pedido.mail + '"' + ')')
-                </td>
-    else
-        .w3-container.w3-blue
-            h2.w3-center Não existem pedidos de produtores
 
-    #coisa
-
-
+   
     

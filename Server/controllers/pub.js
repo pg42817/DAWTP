@@ -10,7 +10,7 @@ module.exports.list = () => {
 
 module.exports.list = (mail,role) => {
     console.log(role)
-    if(role=="adiminstrador")
+    if(role=="administrador")
     {
         return Pub
         .find()

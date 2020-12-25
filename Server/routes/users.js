@@ -69,7 +69,7 @@ router.get('/logout', function (req, res) {
 //#region pubs
 
 router.get('/pubs/download/:fname', (req, res) => {
-  if (req.isAuthenticated() && (req.user.role == "consumidor" || req.user.role == "produtor" || req.user.role == "adiminstrador")) {
+  if (req.isAuthenticated() && (req.user.role == "consumidor" || req.user.role == "produtor" || req.user.role == "administrador")) {
     let filePath = path.join(__dirname, '../public/fileStore/')
     let zipPath = path.join(__dirname, '../public/fileStore/zip')
     let bagitPath = zipPath + '/bagit.txt'
@@ -116,7 +116,7 @@ router.get('/pubs/download/:fname', (req, res) => {
 
 
 router.get('/pubs/upload', function (req, res) {
-  if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "adiminstrador")) {
+  if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
     var d = new Date().toISOString().substr(0, 16)
     res.render('pubs/form', { utilizador: req.user, d });
   }
@@ -127,7 +127,7 @@ router.get('/pubs/upload', function (req, res) {
 
 
 router.post('/pubs', upload.array('myFile'), function (req, res) {
-  if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "adiminstrador")) {
+  if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
     var i;
     var recursos = []
     var d = new Date().toISOString().substr(0, 16)
@@ -190,19 +190,7 @@ router.get('/perfil', function (req, res) {
     .then(utilizador => {
       Pub.lookUp(mail)
         .then(publicacoes => {
-          //se for admin envia a lista de pedidos
-          if (req.user.role == "adiminstrador") {
-            User.list_pedidos_produtor()
-              .then(pedidos => {
-                console.log(pedidos)
-                res.render('perfil', { utilizador: utilizador, publicacoes, publicacoes, pedidos: pedidos });
-              })
-              .catch(erro => done(erro))
-          }
-          else {
-            var pedidos = "vazio"
-            res.render('perfil', { utilizador: utilizador, publicacoes, publicacoes, pedidos: pedidos });
-          }
+          res.render('perfil', { utilizador: utilizador, publicacoes, publicacoes });
         })
         .catch(erro => done(erro))
     })
@@ -212,6 +200,16 @@ router.get('/perfil', function (req, res) {
 module.exports = router;
 
 //#region pedido produtor
+
+router.get('/pedidos/', function (req, res) {
+    //se for admin envia a lista de pedidos
+      User.list_pedidos_produtor()
+        .then(pedidos => {
+          res.render('pedidos', {pedidos: pedidos})            
+        })
+        .catch(erro => done(erro))
+});
+
 router.post('/pedido-produtor/', function (req, res) {
   mail = req.user.mail
   User.update_pedir_produtor(mail, "sim")
@@ -223,6 +221,7 @@ router.post('/pedido-produtor/', function (req, res) {
 
 //aceitar pedido
 router.post('/aceitar-pedido/:mail', function (req, res) {
+  console.log("APROVAR")
   mail = req.params.mail
   User.update_pedir_produtor(mail, "nao")
     .then(utilizador => {
@@ -238,6 +237,7 @@ router.post('/aceitar-pedido/:mail', function (req, res) {
 //recusar pedido
 router.post('/recusar-pedido/:mail', function (req, res) {
   mail = req.params.mail
+  console.log("RECUSAR")
   User.update_pedir_produtor(mail, "nao")
     .then(utilizador => {
       res.end()

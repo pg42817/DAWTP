@@ -33,7 +33,7 @@ function recusar_pedido(mail)
 {   
     var myobj = document.getElementById(mail)
     myobj.remove()
-    $.post('/users/aceitar-pedido/' + mail);
+    $.post('/users/recusar-pedido/' + mail);
     alert("Recusado com sucesso");
 
     User.list_pedidos_produtor()

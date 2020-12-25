@@ -11,7 +11,7 @@ var userSchema = new mongoose.Schema({
     data_register: { type:String, required : true},
     data_last_login: { type:String, required : true},
     password_enc: { type:String, required : true},
-    pedido_produtor: {type:String, required: true},
+    pedido_produtor: {type:String},
 });
 
 
