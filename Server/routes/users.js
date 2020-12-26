@@ -11,21 +11,42 @@ const pub = require('../models/pub');
 var archiver = require('archiver')
 var fse = require('fs-extra')
 var mime = require('mime-types')
-var CryptoJS = require('crypto-js')
-
-
+var CryptoJS = require('crypto-js');
+const { body, validationResult } = require('express-validator');
+const { Console } = require('console');
 var upload = multer({ dest: 'uploads/' })
 
 //#region Registo
 router.get('/registar', function (req, res) {
   res.render('registar')
+  req.session.errors=null;
 });
 
-router.post('/registar', function (req, res) {
-  var user = req.body
-  User.insert(user)
-    .then(data => res.render('login'))
-    .catch(err => res.render('error', { error: err }))
+router.post('/registar',[body('mail','Endereço email inválido!').isEmail(),
+  body('mail','Endereço email necessário!').notEmpty(),
+  body('name','Nome necessário!').notEmpty(),
+  body('course','Curso necessário!').notEmpty(),
+  body('activity','Atividade necessária!').notEmpty(),
+  body('department','Departamento necessário!').notEmpty(),
+  body('password_enc','Password necessário!').notEmpty(),
+  body('password_enc2','Passwords não coincidem!').custom((value,{req})=>{
+    if (value!== req.body.password_enc){
+      throw new Error('Passwords não coincidem')
+    }else{
+      return value;
+    }
+  })],(req, res) =>{
+    var user = req.body
+    var errors = validationResult(req).array();
+    console.log(errors.length)
+    if(errors.length!=0){
+      res.render('registar',{title:'Erro',errors:errors})
+    }
+    else{
+      User.insert(user)
+      .then(data => res.render('login'))
+      .catch(err => res.render('error', { error: err }))
+    }
 });
 
 //#endregion

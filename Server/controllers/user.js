@@ -1,4 +1,7 @@
 var User = require('../models/user')
+const CryptoJS = require("crypto-js")
+
+var key= "ASECRET"
 
 // Returns user list
 module.exports.list = () => {
@@ -23,7 +26,10 @@ module.exports.list_pedidos_produtor=() => {
 
 module.exports.insert = user => {
     data = new Date().toISOString().substr(0,16)
+    var cipher = CryptoJS.AES.encrypt(user.password_enc,key)
+    cipher=cipher.toString();
     var newUser = new User(user)
+    newUser.password_enc= cipher
     newUser.data_register=data
     newUser.data_last_login=data
     newUser.role="consumidor"

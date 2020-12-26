@@ -4,6 +4,13 @@ block content
   .w3-container.w3-margin.w3-border
     .w3-container.w3-blue
         h3.w3-left Registar utilizador
+    
+    if errors
+      ul
+        each error, i in errors
+          #{console.log(error.msg)}
+          li #{error.msg}
+
     form.w3-container(action='/users/registar', method='POST')
             | Mail: 
             input.w3-input(type='text', name='mail', value='')
@@ -20,10 +27,12 @@ block content
             </datalist>
             br
             br
-            | Departamento: 
+            | Departamento:
             input.w3-input(type='text', name='department', value='')
             | Password: 
             input.w3-input(type="password", name='password_enc', value='')
+            | Confirmar Password: 
+            input.w3-input(type="password", name='password_enc2', value='')
             input.w3-btn.w3-blue(type='submit', value='Adicionar')
 
 

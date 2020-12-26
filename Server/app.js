@@ -5,8 +5,10 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose')
 var User = require('../Server/controllers/user')
+var CryptoJS = require('crypto-js')
+var key= "ASECRET"
 
- 
+
 //#region mongoose Configuration
 //Set up default mongoose connection
 var mongoDB = 'mongodb://127.0.0.1/DAW2020';
@@ -39,14 +41,15 @@ passport.use(new LocalStrategy(
     User.lookUp(id)
       .then(dados => {
         const user = dados
+        var decipher = CryptoJS.AES.decrypt(user.password_enc, key);
+        decipher = decipher.toString(CryptoJS.enc.Utf8);
         if(!user) { return done(null, false, {message: 'Utilizador inexistente!\n'})}
-        if(password != user.password_enc) { return done(null, false, {message: 'Credenciais inválidas!\n'})}
+        if(password != decipher) { return done(null, false, {message: 'Credenciais inválidas!\n'})}
         return done(null, user)
       })
       .catch(erro => done(erro))
     })
 )
-
 //#endregion
 
 //#region passport
@@ -94,7 +97,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser('DAW2020auth'));
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.use(passport.initialize());
 app.use(passport.session());
 
