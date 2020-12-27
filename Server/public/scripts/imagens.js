@@ -1,10 +1,11 @@
 function showImage(id,extensao,autor,name) {
     console.log(name + '.' + extensao)
-    if (extensao == 'image/png' || extensao == 'image/jpeg')
-        var ficheiro = '<img src="/fileStore/' + id+ '" width="80%"/>'
+    if (extensao == 'png' || extensao == 'jpeg')
+        var ficheiro = '<img src="/fileStore/'+autor + '/' + id+ '.'+ extensao +  '" width="80%"/>'
     else
         var ficheiro = '<p>'  + name + ', ' + extensao + '</p>'
     
+    alert(extensao)
     var fileObj = $(`
         <div class="w3-row w3-margin">
             <div class="w3-col s6">
