@@ -85,7 +85,7 @@ block content
                             b Comentários
                 .w3-col.s9.w3-border
                         each comentario in pub.comments
-                            input.w3-input.w3-border.w3-light-grey(type='text' value=comentario.text readonly="readonly")
+                            input.w3-input.w3-border.w3-light-grey(type='text' value=comentario.author_mail+ ' - ' +comentario.text readonly="readonly")
                         <div id=#{index}>
                         </div>
                 

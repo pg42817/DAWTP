@@ -1,9 +1,8 @@
 function add_comentario(user,pub_author,pub_date,index) {
 
     var comentario = $("input[id=input" + index + "]").val();
-    
     var newFile = $(`
-    <input class="w3-input w3-border w3-light-grey" type="text" value=${comentario} readonly="readonly")>
+    <input class="w3-input w3-border w3-light-grey" type="text" value="${user} - ${comentario}" readonly="readonly")>
         `)
     var name="#comentario"+index
 
