@@ -36,23 +36,7 @@ router.post('/registar',[body('mail','Endereço email inválido!').isEmail(),
     }else{
       return value;
     }
-  }),
-  body('mail','Endereço de email já se encontra registado').custom((value,{req})=>{
-    User.lookUp(req.body.mail)
-    .then(utilizador => {
-      //se nao houver registo com este email, vai ser returnado umutilizador a null
-      if(!utilizador)
-      {
-        throw new Error('Endereço de email já se encontra registado')
-      }
-      else
-      {
-        return value
-      }
-    })
-    .catch(erro => done(erro))
-  })
-],(req, res) =>{
+  })],(req, res) =>{
     var user = req.body
     var errors = validationResult(req).array();
     console.log(errors.length)
