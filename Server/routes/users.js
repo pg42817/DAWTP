@@ -220,6 +220,7 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
 
 //#endregion
 
+//#region perfis
 //apresenta os dados do utilizador e as suas publicações
 router.get('/perfil', function (req, res) {
   mail = req.user.mail
@@ -235,6 +236,63 @@ router.get('/perfil', function (req, res) {
     .catch(erro => done(erro))
 
 });
+
+router.get('/perfis/:mail', function (req, res) {
+  perfil = req.params.mail
+  user= req.user.mail
+  role=req.user.role
+
+
+  //verificar se o perfil do dono da publicaçao é o proprio
+  if(user==perfil)
+  {
+    console.log("aaaaaaa")
+    User.lookUp(user)
+    .then(utilizador => {
+      Pub.lookUp(user)
+        .then(publicacoes => {
+          res.render('perfil', { utilizador: utilizador, pubs:publicacoes});
+        })
+        .catch(erro => done(erro))
+    })
+    .catch(erro => done(erro))
+  }
+  else
+  {
+    console.log("bbbbbbb")
+    User.lookUp(perfil)
+    .then(utilizador => {
+      Pub.list(mail,role)
+      .then(pubs => {
+        //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
+        if(role=="produtor")
+        {
+          Pub.list_aux(perfil)
+            .then(publicacoes=> {
+              var p = []
+              publicacoes.forEach(element => {
+                p.push(element)
+              });
+              pubs.forEach(element => {
+                p.push(element)
+              });
+              res.render('perfis', { utilizador: utilizador, pubs:p });
+            })
+        }
+        else
+        {
+          res.render('perfis', { utilizador: utilizador, pubs });
+        }
+      })
+      .catch(erro => done(erro))
+    })
+    .catch(erro => done(erro))
+  }
+
+
+});
+
+//#endregion
 
 //#region pedido produtor
 
