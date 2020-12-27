@@ -14,6 +14,7 @@ var mime = require('mime-types')
 var CryptoJS = require('crypto-js');
 const { body, validationResult } = require('express-validator');
 const { Console } = require('console');
+const { CONNREFUSED } = require('dns');
 var upload = multer({ dest: 'uploads/' })
 
 //#region Registo
@@ -154,7 +155,7 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
     var i;
     var recursos = []
     var extensoes = []
-    var d = new Date().toISOString().substr(0, 16)
+    var d = new Date().toISOString()
     author = req.user.mail
     description = req.body.description
     visibility = req.body.visibility
@@ -285,13 +286,24 @@ router.post('/recusar-pedido/:mail', function (req, res) {
 
 
 router.post('/adicionar_comentario', function (req, res) {
-  date=req.body.data
+  var d = new Date().toISOString().substr(0, 16)
+
+  pub_date=req.body.data
   text=req.body.text
   author=req.body.author
-  id=req.body.pub_id
+  pub_author=req.body.pub_author
 
-  Pub.adicionar_comentario(date,text,author,id)
+  Pub.find_pub(pub_date,pub_author)
   .then(dados => {
+      var comentario= {"text":text,
+      "author_mail":author,
+      "data":d}
+      dados.comments.push(comentario)
+      
+      Pub.update(dados)
+    .then(dados => {
+    })
+    .catch(erro => done(erro))
   })
   .catch(erro => done(erro))
 

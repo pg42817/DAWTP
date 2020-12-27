@@ -38,20 +38,21 @@ block content
                             b Titulo
                         .w3-col.s9.w3-border
                             input.w3-input.w3-border.w3-light-grey(type='text' name='title' value=recurso.title readonly="readonly")(onclick='showImage(' + '"' + recurso.id + '"' + ','+ '"' + recurso.extension + '"' + ','+ '"' +  pub.author + '"' + ',' + '"' + recurso.title + '"' + ')')                     
-                        .card-block
+                <br>
+                <br>
+                <br>
                 .w3-col.s3
                         label.w3-text-blue
                             b Comentários
-                each comentario in pub.comments
-                    .w3-row.w3-margin-bottom
-                    .w3-col.s3
-                        p #{comentario.author_mail}: #{comentario.text} 
-                .w3-row.w3-margin-bottom
-                .w3-col.s3
-                    <div id=#{index}>
-                    </div>
+                .w3-col.s9.w3-border
+                        each comentario in pub.comments
+                            input.w3-input.w3-border.w3-light-grey(type='text' value=comentario.text readonly="readonly")
+                        <div id=#{index}>
+                        </div>
+                
+                .w3-col.s9.w3-border
                     input.w3-input.w3-border.w3-light-grey(type='text' id="input"+index)
-                    input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Comentar')(onclick='add_comentario(' + '"' + utilizador.mail + '"' + ',' + '"'+ pub.id + '"' + ',' + '"' + index + '"' + ')')     
+                    input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Comentar')(onclick='add_comentario(' + '"' + utilizador.mail + '"' + ',' + '"'+ pub.author + '"' + ',' + '"'+   pub.data_created+ '"' + ',' + '"' + index + '"' + ')')     
     else
         .w3-container.w3-blue
-            h1.w3-center Não existem publicações registadas nas últimas 24 horas
+            h2.w3-center Não existem publicações registadas nas ultimas 24 horas

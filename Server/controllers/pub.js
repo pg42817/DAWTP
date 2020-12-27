@@ -54,7 +54,7 @@ module.exports.lookUp = author=> {
 }
 
 module.exports.insert= (author,description,visibility,resources)  => {
-    data = new Date().toISOString().substr(0,16)
+    data = new Date().toISOString()
     var newPub = new Pub()
     newPub.author=author
     newPub.description=description
@@ -65,16 +65,29 @@ module.exports.insert= (author,description,visibility,resources)  => {
     return newPub.save()
 }
  
-module.exports.adicionar_comentario= (date,text,author,id) => {
+module.exports.find_pub= (pub_date,pub_author) => {
 
-    var comment= {
-    "date" : date,
-    "author_mail": author, 
-    "text":text }
-
-    Pub.update(
-        { _id: id }, 
-        { $push: { comments: comment } },
-        done
-    );
+   return Pub
+   .findOne()
+   .where('author').equals(pub_author)
+   .where('data_created').equals(pub_date)
+   .sort({author:1})
+   .exec()
 }
+
+module.exports.update=(pub) => {
+    Pub.update({"author" : pub.author, "data_created": pub.data_created},
+    { $set:
+        {
+            "comments": pub.comments
+        }
+    })
+    .exec()
+
+    return Pub
+   .find({author: pub_author})
+   .where('data_created').equals(pub_date)
+   .sort({author:1})
+   .exec()
+}
+
