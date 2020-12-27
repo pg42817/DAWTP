@@ -227,14 +227,13 @@ router.get('/perfil', function (req, res) {
       console.log("tem pedido?:" + utilizador.pedido_produtor)
       Pub.lookUp(mail)
         .then(publicacoes => {
-          res.render('perfil', { utilizador: utilizador, publicacoes, publicacoes });
+          res.render('perfil', { utilizador: utilizador, pubs:publicacoes});
         })
         .catch(erro => done(erro))
     })
     .catch(erro => done(erro))
 
 });
-module.exports = router;
 
 //#region pedido produtor
 
@@ -283,3 +282,69 @@ router.post('/recusar-pedido/:mail', function (req, res) {
 });
 
 //#endregion
+
+
+router.post('/adicionar_comentario', function (req, res) {
+  date=req.body.data
+  text=req.body.text
+  author=req.body.author
+  id=req.body.pub_id
+
+  Pub.adicionar_comentario(date,text,author,id)
+  .then(dados => {
+  })
+  .catch(erro => done(erro))
+
+});
+
+//#region news
+router.get('/news', function(req, res) {
+  var d = new Date().toISOString().substr(0, 16)
+  mail=req.user.mail
+  role=req.user.role
+
+  Pub.list(mail,role)
+  .then(pubs => {
+    //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
+    if(role=="produtor")
+    {
+      Pub.list_aux(mail)
+        .then(publicacoes=> {
+          var p = []
+          publicacoes.forEach(element => {
+            p.push(element)
+          });
+          pubs.forEach(element => {
+            p.push(element)
+          });
+          var news=get_news(p)
+          console.log(news)
+          res.render('news', { utilizador: req.user, pubs:news, d });
+        })
+    }
+    else
+    {
+      var news=get_news(pubs)
+      console.log(news)
+      res.render('news', { utilizador: req.user, pubs:news, d });
+    }
+  })
+  .catch(erro => done(erro))
+});
+
+function get_news(publicacoes){
+  var news=[]
+  var date_agora = Date.parse(new Date())
+  publicacoes.forEach(pub => {
+    var data=Date.parse(pub.data_created)
+    const diffTime = Math.abs(date_agora - data);
+    if(diffTime<86400000)
+    {
+      news.push(pub)
+    }
+  })
+  return news
+}
+//#endregion
+
+module.exports = router;

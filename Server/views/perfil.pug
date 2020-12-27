@@ -49,38 +49,48 @@ block content
                 .w3-col.s9.w3-border
                     input.w3-input.w3-border.w3-light-grey(type='text' name='role' value=utilizador.role readonly="readonly")
 
-    #display.w3-card-4.modal
-    .w3-container.w3-blue
-        h2.w3-center Lista de publicaçoes pessoais
-    
-    each pub in publicacoes
-        .card
-            .w3-row.w3-margin-bottom
-                .w3-col.s3
-                    label.w3-text-blue
-                        b Autor
-                .w3-col.s9.w3-border
-                    input.w3-input.w3-border.w3-light-grey(type='text' name='author' value=pub.author readonly="readonly")
-                .w3-col.s3
-                    label.w3-text-blue
-                        b Descrição
-                .w3-col.s9.w3-border
-                    input.w3-input.w3-border.w3-light-grey(type='text' name='description' value=pub.description readonly="readonly")
-                .w3-col.s3
-                    label.w3-text-blue
-                        b Recursos
-            each recurso in pub.resources   
+
+    if(pubs.length>0)
+        #display.w3-card-4.modal
+        .w3-container.w3-blue
+            h2.w3-center Lista de publicações
+        
+        each pub, index in pubs 
+            .card
+                .w3-row.w3-margin-bottom
                     .w3-col.s3
                         label.w3-text-blue
-                        b Titulo
+                            b Autor
                     .w3-col.s9.w3-border
-                        input.w3-input.w3-border.w3-light-grey(type='text' name='title' value=recurso.title readonly="readonly")(onclick='showImage(' + '"' + recurso.id + '"' + ','+ '"' + recurso.extension + '"' + ','+ '"' +  pub.author + '"' + ',' + '"' + recurso.title + '"' + ')')                                                                                                
-                    .card-block
-            .w3-col.s3
-                    label.w3-text-blue
-                        <br>
-                        <br>
-
-
-   
-    
+                        input.w3-input.w3-border.w3-light-grey(type='text' name='author' value=pub.author readonly="readonly")
+                    .w3-col.s3
+                        label.w3-text-blue
+                            b Descrição
+                    .w3-col.s9.w3-border
+                        input.w3-input.w3-border.w3-light-grey(type='text' name='description' value=pub.description readonly="readonly")
+                    .w3-col.s3
+                        label.w3-text-blue
+                            b Recursos
+                each recurso in pub.resources   
+                        .w3-col.s3
+                            label.w3-text-blue
+                            b Titulo
+                        .w3-col.s9.w3-border
+                            input.w3-input.w3-border.w3-light-grey(type='text' name='title' value=recurso.title readonly="readonly")(onclick='showImage(' + '"' + recurso.id + '"' + ','+ '"' + recurso.extension + '"' + ','+ '"' +  pub.author + '"' + ',' + '"' + recurso.title + '"' + ')')                     
+                        .card-block
+                .w3-col.s3
+                        label.w3-text-blue
+                            b Comentários
+                each comentario in pub.comments
+                    .w3-row.w3-margin-bottom
+                    .w3-col.s3
+                        p #{comentario.author_mail}: #{comentario.text} 
+                .w3-row.w3-margin-bottom
+                .w3-col.s3
+                    <div id=#{index}>
+                    </div>
+                    input.w3-input.w3-border.w3-light-grey(type='text' id="input"+index)
+                    input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Comentar')(onclick='add_comentario(' + '"' + utilizador.mail + '"' + ',' + '"'+ pub.id + '"' + ',' + '"' + index + '"' + ')')     
+    else
+        .w3-container.w3-blue
+            h2.w3-center Ainda não tens publicações registadas

@@ -65,3 +65,16 @@ module.exports.insert= (author,description,visibility,resources)  => {
     return newPub.save()
 }
  
+module.exports.adicionar_comentario= (date,text,author,id) => {
+
+    var comment= {
+    "date" : date,
+    "author_mail": author, 
+    "text":text }
+
+    Pub.update(
+        { _id: id }, 
+        { $push: { comments: comment } },
+        done
+    );
+}

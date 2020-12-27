@@ -5,17 +5,17 @@ block content
     <div>
         form.w3-container(action='/users/logout' method='GET')
             input.w3-btn.w3-right.w3-right.w3-blue-grey(type='submit' value='Logout')
-        form.w3-container(action='/users/perfil'  method='GET')
-            input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Perfil')
-        form.w3-container(action='/users/news'  method='GET')
-            input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Notícias')
+        form.w3-container(action='/mural'  method='GET')
+            input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Mural')
     </div>
 
-    if(pubs.length>0)
-        #display.w3-card-4.modal
+    #display.w3-card-4.modal
+    .w3-container.w3-blue
+        h2.w3-center Noticias
+    
+    if (pubs.length>0)
         .w3-container.w3-blue
-            h2.w3-center Lista de publicações
-        
+            h1.w3-center Publicações registadas nas últimas 24 horas
         each pub, index in pubs 
             .card
                 .w3-row.w3-margin-bottom
@@ -54,4 +54,4 @@ block content
                     input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Comentar')(onclick='add_comentario(' + '"' + utilizador.mail + '"' + ',' + '"'+ pub.id + '"' + ',' + '"' + index + '"' + ')')     
     else
         .w3-container.w3-blue
-            h2.w3-center Ainda não existem publicações registadas 
+            h1.w3-center Não existem publicações registadas nas últimas 24 horas

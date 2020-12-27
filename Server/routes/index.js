@@ -26,13 +26,11 @@ router.get('/mural', verificaAutenticacao, function(req, res) {
           pubs.forEach(element => {
             p.push(element)
           });
-          console.log(p)
           res.render('mural', { utilizador: req.user, pubs:p, d });
         })
     }
     else
     {
-      console.log(pubs)
       res.render('mural', { utilizador: req.user, pubs, d });
     }
   })

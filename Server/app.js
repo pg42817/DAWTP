@@ -7,11 +7,7 @@ var mongoose = require('mongoose')
 var User = require('../Server/controllers/user')
 var CryptoJS = require('crypto-js')
 var key= "ASECRET"
-<<<<<<< HEAD
 
-
-=======
->>>>>>> 2c80c5172fd7900dbb369691ee525cc477601c1f
 //#region mongoose Configuration
 //Set up default mongoose connection
 var mongoDB = 'mongodb://127.0.0.1/DAW2020';
