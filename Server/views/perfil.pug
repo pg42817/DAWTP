@@ -70,13 +70,23 @@ block content
                         input.w3-input.w3-border.w3-light-grey(type='text' name='description' value=pub.description readonly="readonly")
                     .w3-col.s3
                         label.w3-text-blue
+                            b Avaliação da Publicação
+                    .w3-col.s9.w3-border
+                        input.w3-input.w3-border.w3-light-grey(type='text' name='rating' value=pub.pub_rating readonly="readonly")
+                    .w3-col.s3
+                        label.w3-text-blue
                             b Recursos
                 each recurso in pub.resources   
                         .w3-col.s3
                             label.w3-text-blue
-                            b Titulo
+                                b Titulo
                         .w3-col.s9.w3-border
                             input.w3-input.w3-border.w3-light-grey(type='text' name='title' value=recurso.title readonly="readonly")(onclick='showImage(' + '"' + recurso.id + '"' + ','+ '"' + recurso.extension + '"' + ','+ '"' +  pub.author + '"' + ',' + '"' + recurso.title + '"' + ')')                     
+                        .w3-col.s3
+                                label.w3-text-blue
+                                    b Avaliação do Recurso
+                        .w3-col.s9.w3-border
+                            input.w3-input.w3-border.w3-light-grey(type='text' name='rating' value=recurso.rating readonly="readonly")
                 <br>
                 <br>
                 <br>

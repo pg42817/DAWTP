@@ -15,7 +15,7 @@ block content
         #display.w3-card-4.modal
         .w3-container.w3-blue
             h2.w3-center Lista de publicações
-        
+        - var check = true;
         each pub, index in pubs 
             .card
                 .w3-row.w3-margin-bottom
@@ -32,13 +32,38 @@ block content
                         input.w3-input.w3-border.w3-light-grey(type='text' name='description' value=pub.description readonly="readonly")
                     .w3-col.s3
                         label.w3-text-blue
+                            b Avaliação da Publicação
+                    .w3-col.s9.w3-border
+                        input.w3-input.w3-border.w3-light-grey(type='text' name='rating' value=pub.pub_rating readonly="readonly")
+                    .w3-col.s3
+                        label.w3-text-blue
                             b Recursos
-                each recurso in pub.resources   
+                each recurso in pub.resources  
+                    - var check = true; 
                         .w3-col.s3
                             label.w3-text-blue
                                 b Titulo
                         .w3-col.s9.w3-border
                             input.w3-input.w3-border.w3-light-grey(type='text' name='title' value=recurso.title readonly="readonly")(onclick='showImage(' + '"' + recurso.id + '"' + ','+ '"' + recurso.extension + '"' + ','+ '"' +  pub.author + '"' + ',' + '"' + recurso.title + '"' + ')')                     
+                        .w3-col.s3
+                            label.w3-text-blue
+                                b Avaliação do Recurso
+                        .w3-col.s9.w3-border
+                            input.w3-input.w3-border.w3-light-grey(type='text' name='rating' value=recurso.rating readonly="readonly")
+                        each rating in recurso.rating_list
+                            if check && (rating.rating_mail == utilizador.mail)
+                                - check=false
+                                .w3-col.s3
+                                    label.w3-text-blue
+                                        b Minha Avaliação do Recurso
+                                .w3-col.s9.w3-border
+                                    input.w3-input.w3-border.w3-light-grey(type='text' name='rating' value=rating.value readonly="readonly")(onclick='giveRating(' + '"' + pub.id + '"' + ','+ '"' +  recurso.id + '"' + ')')
+                        if check
+                            .w3-col.s3
+                                label.w3-text-blue
+                                    b Minha Avaliação do Recurso
+                            .w3-col.s9.w3-border
+                                input.w3-input.w3-border.w3-light-grey(type='text' name='rating'  readonly="readonly")(onclick='giveRating(' + '"' + pub.id + '"' + ','+ '"' +  recurso.id + '"' + ')')
                 <br>
                 <br>
                 <br>

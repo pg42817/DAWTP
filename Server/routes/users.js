@@ -20,34 +20,34 @@ var upload = multer({ dest: 'uploads/' })
 //#region Registo
 router.get('/registar', function (req, res) {
   res.render('registar')
-  req.session.errors=null;
+  req.session.errors = null;
 });
 
-router.post('/registar',[body('mail','Endereço email inválido!').isEmail(),
-  body('mail','Endereço email necessário!').notEmpty(),
-  body('name','Nome necessário!').notEmpty(),
-  body('course','Curso necessário!').notEmpty(),
-  body('activity','Atividade necessária!').notEmpty(),
-  body('department','Departamento necessário!').notEmpty(),
-  body('password_enc','Password necessário!').notEmpty(),
-  body('password_enc2','Passwords não coincidem!').custom((value,{req})=>{
-    if (value!== req.body.password_enc){
-      throw new Error('Passwords não coincidem')
-    }else{
-      return value;
-    }
-  })],(req, res) =>{
-    var user = req.body
-    var errors = validationResult(req).array();
-    console.log(errors.length)
-    if(errors.length!=0){
-      res.render('registar',{title:'Erro',errors:errors})
-    }
-    else{
-      User.insert(user)
+router.post('/registar', [body('mail', 'Endereço email inválido!').isEmail(),
+body('mail', 'Endereço email necessário!').notEmpty(),
+body('name', 'Nome necessário!').notEmpty(),
+body('course', 'Curso necessário!').notEmpty(),
+body('activity', 'Atividade necessária!').notEmpty(),
+body('department', 'Departamento necessário!').notEmpty(),
+body('password_enc', 'Password necessário!').notEmpty(),
+body('password_enc2', 'Passwords não coincidem!').custom((value, { req }) => {
+  if (value !== req.body.password_enc) {
+    throw new Error('Passwords não coincidem')
+  } else {
+    return value;
+  }
+})], (req, res) => {
+  var user = req.body
+  var errors = validationResult(req).array();
+  console.log(errors.length)
+  if (errors.length != 0) {
+    res.render('registar', { title: 'Erro', errors: errors })
+  }
+  else {
+    User.insert(user)
       .then(data => res.render('login'))
       .catch(err => res.render('error', { error: err }))
-    }
+  }
 });
 
 //#endregion
@@ -138,6 +138,73 @@ router.get('/pubs/download/:fname/:autor', (req, res) => {
   }
 })
 
+router.post('/pubs/rating/:pubid/:resourceid', function (req, res) {
+  Pub.handleRating(req.params.pubid, req.params.resourceid, req.user.mail, function (err, obj) {
+    if (err) {
+      throw err;
+    }
+    else {
+      if (obj == null) {
+        Pub.insertRating(req.params.pubid, req.params.resourceid, req.user.mail, req.body.rating)
+          .then(() => {
+            Pub.overallRating(req.params.pubid, req.params.resourceid, function (err, obj1) {
+              if (err) {
+                throw err;
+              } else {
+                var avg_rating = (obj1['sumRatings']) / (obj1['numRatings'])
+                Pub.updateOverallRating(req.params.pubid, req.params.resourceid, avg_rating)
+                  .then(() => {
+                    Pub.pubRating(req.params.pubid, function (err, result) {
+                      if (err) {
+                        throw err;
+                      } else {
+                        var avg_pub_rating = (result[0]['sumRatings']) / (result[0]['numRatings'])
+                        Pub.updatePubRating(req.params.pubid, avg_pub_rating)
+                          .then(() => {
+                            res.redirect('/mural')
+                          })
+                          .catch(erro => done(erro))
+                      }
+                    })
+                  })
+                  .catch(erro => done(erro))
+              }
+            })
+          })
+          .catch(erro => done(erro))
+      } else {
+        Pub.updateRating(req.params.pubid, req.params.resourceid, req.user.mail, req.body.rating)
+          .then(() => {
+            Pub.overallRating(req.params.pubid, req.params.resourceid, function (err, obj2) {
+              if (err) {
+                throw err;
+              } else {
+                var avg_rating = (obj2['sumRatings']) / (obj2['numRatings'])
+                Pub.updateOverallRating(req.params.pubid, req.params.resourceid, avg_rating)
+                  .then(() => {
+                    Pub.pubRating(req.params.pubid, function (err, result) {
+                      if (err) {
+                        throw err;
+                      } else {
+                        var avg_pub_rating = (result[0]['sumRatings']) / (result[0]['numRatings'])
+                        Pub.updatePubRating(req.params.pubid, avg_pub_rating)
+                          .then(() => {
+                            res.redirect('/mural')
+                          })
+                          .catch(erro => done(erro))
+                      }
+                    })
+                  })
+                  .catch(erro => done(erro))
+              }
+            })
+          })
+          .catch(erro => done(erro))
+      }
+    }
+  })
+});
+
 
 router.get('/pubs/upload', function (req, res) {
   if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
@@ -184,7 +251,8 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
         "theme": theme,
         "title": title,
         "data_created": d,
-        "extension": extensoes[i]
+        "extension": extensoes[i],
+        "rating": 0
       };
       recursos.push(recurso);
     }
@@ -193,13 +261,13 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
       .then(dados => {
         //mudar nome do ficheiro na pasta para o id do ficheiro na bd
         for (i = 0; i < req.files.length; i++) {
-          var file_name= dados.resources[i].id + '.'+ extensoes[i]
-          
-          dir=path.join(__dirname, '../public/fileStore/', author)
+          var file_name = dados.resources[i].id + '.' + extensoes[i]
+
+          dir = path.join(__dirname, '../public/fileStore/', author)
           console.log(dir)
-          if (!fs.existsSync(dir)){
+          if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
-        }
+          }
 
           let newPath = path.join(dir, file_name)
           let oldPath = path.join(__dirname, '../public/fileStore/', req.files[i].originalname)
@@ -229,7 +297,7 @@ router.get('/perfil', function (req, res) {
       console.log("tem pedido?:" + utilizador.pedido_produtor)
       Pub.lookUp(mail)
         .then(publicacoes => {
-          res.render('perfil', { utilizador: utilizador, pubs:publicacoes});
+          res.render('perfil', { utilizador: utilizador, pubs: publicacoes });
         })
         .catch(erro => done(erro))
     })
@@ -239,54 +307,50 @@ router.get('/perfil', function (req, res) {
 
 router.get('/perfis/:mail', function (req, res) {
   perfil = req.params.mail
-  user= req.user.mail
-  role=req.user.role
+  user = req.user.mail
+  role = req.user.role
 
 
   //verificar se o perfil do dono da publicaçao é o proprio
-  if(user==perfil)
-  {
+  if (user == perfil) {
     console.log("aaaaaaa")
     User.lookUp(user)
-    .then(utilizador => {
-      Pub.lookUp(user)
-        .then(publicacoes => {
-          res.render('perfil', { utilizador: utilizador, pubs:publicacoes});
-        })
-        .catch(erro => done(erro))
-    })
-    .catch(erro => done(erro))
-  }
-  else
-  {
-    console.log("bbbbbbb")
-    User.lookUp(perfil)
-    .then(utilizador => {
-      Pub.list(mail,role)
-      .then(pubs => {
-        //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
-        if(role=="produtor")
-        {
-          Pub.list_aux(perfil)
-            .then(publicacoes=> {
-              var p = []
-              publicacoes.forEach(element => {
-                p.push(element)
-              });
-              pubs.forEach(element => {
-                p.push(element)
-              });
-              res.render('perfis', { utilizador: utilizador, pubs:p });
-            })
-        }
-        else
-        {
-          res.render('perfis', { utilizador: utilizador, pubs });
-        }
+      .then(utilizador => {
+        Pub.lookUp(user)
+          .then(publicacoes => {
+            res.render('perfil', { utilizador: utilizador, pubs: publicacoes });
+          })
+          .catch(erro => done(erro))
       })
       .catch(erro => done(erro))
-    })
-    .catch(erro => done(erro))
+  }
+  else {
+    console.log("bbbbbbb")
+    User.lookUp(perfil)
+      .then(utilizador => {
+        Pub.list(mail, role)
+          .then(pubs => {
+            //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
+            if (role == "produtor") {
+              Pub.list_aux(perfil)
+                .then(publicacoes => {
+                  var p = []
+                  publicacoes.forEach(element => {
+                    p.push(element)
+                  });
+                  pubs.forEach(element => {
+                    p.push(element)
+                  });
+                  res.render('perfis', { utilizador: utilizador, pubs: p });
+                })
+            }
+            else {
+              res.render('perfis', { utilizador: utilizador, pubs });
+            }
+          })
+          .catch(erro => done(erro))
+      })
+      .catch(erro => done(erro))
   }
 
 
@@ -297,12 +361,12 @@ router.get('/perfis/:mail', function (req, res) {
 //#region pedido produtor
 
 router.get('/pedidos/', function (req, res) {
-    //se for admin envia a lista de pedidos
-      User.list_pedidos_produtor()
-        .then(pedidos => {
-          res.render('pedidos', {pedidos: pedidos})            
-        })
-        .catch(erro => done(erro))
+  //se for admin envia a lista de pedidos
+  User.list_pedidos_produtor()
+    .then(pedidos => {
+      res.render('pedidos', { pedidos: pedidos })
+    })
+    .catch(erro => done(erro))
 });
 
 router.post('/pedido-produtor/', function (req, res) {
@@ -346,70 +410,69 @@ router.post('/recusar-pedido/:mail', function (req, res) {
 router.post('/adicionar_comentario', function (req, res) {
   var d = new Date().toISOString().substr(0, 16)
 
-  pub_date=req.body.data
-  text=req.body.text
-  author=req.body.author
-  pub_author=req.body.pub_author
+  pub_date = req.body.data
+  text = req.body.text
+  author = req.body.author
+  pub_author = req.body.pub_author
 
-  Pub.find_pub(pub_date,pub_author)
-  .then(dados => {
-      var comentario= {"text":text,
-      "author_mail":author,
-      "data":d}
-      dados.comments.push(comentario)
-      
-      Pub.update(dados)
+  Pub.find_pub(pub_date, pub_author)
     .then(dados => {
+      var comentario = {
+        "text": text,
+        "author_mail": author,
+        "data": d
+      }
+      dados.comments.push(comentario)
+
+      Pub.update(dados)
+        .then(dados => {
+        })
+        .catch(erro => done(erro))
     })
     .catch(erro => done(erro))
-  })
-  .catch(erro => done(erro))
 
 });
 
 //#region news
-router.get('/news', function(req, res) {
+router.get('/news', function (req, res) {
   var d = new Date().toISOString().substr(0, 16)
-  mail=req.user.mail
-  role=req.user.role
+  mail = req.user.mail
+  role = req.user.role
 
-  Pub.list(mail,role)
-  .then(pubs => {
-    //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
-    if(role=="produtor")
-    {
-      Pub.list_aux(mail)
-        .then(publicacoes=> {
-          var p = []
-          publicacoes.forEach(element => {
-            p.push(element)
-          });
-          pubs.forEach(element => {
-            p.push(element)
-          });
-          var news=get_news(p)
-          console.log(news)
-          res.render('news', { utilizador: req.user, pubs:news, d });
-        })
-    }
-    else
-    {
-      var news=get_news(pubs)
-      console.log(news)
-      res.render('news', { utilizador: req.user, pubs:news, d });
-    }
-  })
-  .catch(erro => done(erro))
+  Pub.list(mail, role)
+    .then(pubs => {
+      //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
+      if (role == "produtor") {
+        Pub.list_aux(mail)
+          .then(publicacoes => {
+            var p = []
+            publicacoes.forEach(element => {
+              p.push(element)
+            });
+            pubs.forEach(element => {
+              p.push(element)
+            });
+            var news = get_news(p)
+            console.log(news)
+            res.render('news', { utilizador: req.user, pubs: news, d });
+          })
+      }
+      else {
+        var news = get_news(pubs)
+        console.log(news)
+        res.render('news', { utilizador: req.user, pubs: news, d });
+      }
+    })
+    .catch(erro => done(erro))
 });
 
-function get_news(publicacoes){
-  var news=[]
+function get_news(publicacoes) {
+  var news = []
   var date_agora = Date.parse(new Date())
   publicacoes.forEach(pub => {
-    var data=Date.parse(pub.data_created)
+    var data = Date.parse(pub.data_created)
     const diffTime = Math.abs(date_agora - data);
-    if(diffTime<86400000)
-    {
+    if (diffTime < 86400000) {
       news.push(pub)
     }
   })
