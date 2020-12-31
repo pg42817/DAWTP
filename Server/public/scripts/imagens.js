@@ -1,17 +1,43 @@
-function showImage(id,extensao,autor,name) {
+function showFile(id,extensao,autor,name) {
     console.log(name + '.' + extensao)
-    if (extensao == 'png' || extensao == 'jpeg')
-        var ficheiro = '<img src="/fileStore/'+autor + '/' + id+ '.'+ extensao +  '" width="80%"/>'
-    else
-        var ficheiro = '<p>'  + name + ', ' + extensao + '</p>'
-    
-    alert(extensao)
+    switch(extensao){
+        case 'png':
+            var ficheiro = '<img src="/fileStore/'+autor + '/' + id+ '.'+ extensao +  '"style="max-width:100%; height=auto;/>'
+            break
+        case 'jpeg':
+            var ficheiro = '<img src="/fileStore/'+autor + '/' + id+ '.'+ extensao +  '"style="max-width:100%; height=auto;/>'
+            break
+        case 'gif':
+            var ficheiro = '<img src="/fileStore/'+autor + '/' + id+ '.'+ extensao +  '"style="max-width:100%; height=auto;/>'
+            break
+        case 'txt':
+            var ficheiro = '<object type="text/plain" data="/fileStore/'+autor + '/' + id+ '.'+ extensao +  '"style="width:100%; height=100%;/>'
+            break
+        case 'pdf':
+            var ficheiro = '<embed src="/fileStore/'+autor + '/' + id+ '.'+ extensao +  '"style="width:100%; height=100%;/>'
+            break
+        case 'html':
+            var ficheiro = '<embed src="/fileStore/'+autor + '/' + id+ '.'+ extensao +  '"style="width:100%; height=100%;/>'
+            break
+        case 'mpga':
+            var ficheiro = '<audio controls><source src="/fileStore/'+autor + '/' + id+ '.'+ extensao +  '"></audio>'
+        case 'wav':
+            var ficheiro = '<audio controls><source src="/fileStore/'+autor + '/' + id+ '.'+ extensao +  '"></audio>'
+            break
+        case 'mp4':
+            var ficheiro ='<video width="320" height="240" controls><source src="/fileStore/'+autor + '/' + id+ '.'+ extensao +  '"></video>' 
+            break
+
+        default:
+            var ficheiro = '<p>'  + name + ', ' + extensao + '</p>'
+    }
+        
     var fileObj = $(`
         <div class="w3-row w3-margin">
-            <div class="w3-col s6">
+            <div>
                 ${ficheiro}
             </div>
-            <div class="w3-col s6 w3-border">
+            <div class="w3-border">
                 <p>Filename: ${name}</p>
                 <p>Mimetype: ${extensao}</p>
             </div>
@@ -23,3 +49,5 @@ function showImage(id,extensao,autor,name) {
     $("#display").append(fileObj, download)
     $("#display").modal()
 }
+
+
