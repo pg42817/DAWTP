@@ -7,7 +7,6 @@ function pedir_produtor(id)
     $.post('/users/pedido-produtor');
     alert("Pedido efetuado com sucesso");
 
-
 }
 
 

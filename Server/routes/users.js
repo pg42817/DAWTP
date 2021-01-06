@@ -15,15 +15,16 @@ var CryptoJS = require('crypto-js');
 const { body, validationResult } = require('express-validator');
 const { Console } = require('console');
 const { CONNREFUSED } = require('dns');
+const user = require('../models/user');
 var upload = multer({ dest: 'uploads/' })
-
 //#region Registo
 router.get('/registar', function (req, res) {
   res.render('registar')
   req.session.errors = null;
 });
 
-router.post('/registar', [body('mail', 'Endereço email inválido!').isEmail(),
+router.post('/registar', [
+body('mail', 'Endereço email inválido!').isEmail(),
 body('mail', 'Endereço email necessário!').notEmpty(),
 body('name', 'Nome necessário!').notEmpty(),
 body('course', 'Curso necessário!').notEmpty(),
@@ -35,8 +36,22 @@ body('password_enc2', 'Passwords não coincidem!').custom((value, { req }) => {
     throw new Error('Passwords não coincidem')
   } else {
     return value;
-  }
-})], (req, res) => {
+  }}),
+body('mail','Email já se encontra registado!').custom(async (value,{req})=>{
+  await User.lookUp(req.body.mail)
+  .then(dados => {
+    if(dados)
+    {
+      console.log('\n\nEXISTE\n\n')
+      throw new Error('Esse email já se encontra registado!')
+    }
+    else{
+      console.log('\n\nNAO EXISTE\n\n')
+    }
+  })
+  .catch(erro => done(erro))
+})
+], (req, res) => {
   var user = req.body
   var errors = validationResult(req).array();
   console.log(errors.length)
@@ -49,6 +64,17 @@ body('password_enc2', 'Passwords não coincidem!').custom((value, { req }) => {
       .catch(err => res.render('error', { error: err }))
   }
 });
+
+router.post('/validateEmail/',function(req,res){
+  User.lookUp(req.body.mail).then(user=>{
+    if(user){
+      res.render('registar',req.body)
+    }
+    else{
+      res.render('login')
+    }
+  })
+})
 
 //#endregion
 
@@ -478,6 +504,7 @@ function get_news(publicacoes) {
   })
   return news
 }
+
 //#endregion
 
 module.exports = router;
