@@ -47,7 +47,7 @@ function showFile(id,extensao,autor,name) {
     var download = $('<div><a href="/users/pubs/download/' + id + '.' + extensao+ '/' + autor + '">Download</a></div>')
     $("#display").empty()
     $("#display").append(fileObj, download)
-    $("#display").modal()
+    $("#display").modal('show')
 }
 
 

@@ -5,52 +5,49 @@ var mongoose = require('mongoose')
 module.exports.list = () => {
     return Pub
         .find()
-        .sort({author:1})
+        .sort({ author: 1 })
         .exec()
 }
 
-module.exports.list = (mail,role) => {
+module.exports.list = (mail, role) => {
     console.log(role)
-    if(role=="administrador")
-    {
+    if (role == "administrador") {
         return Pub
-        .find()
-        .sort({author:1})
-        .exec()
+            .find()
+            .sort({ author: 1 })
+            .exec()
     }
-    if(role=="produtor")
-    {
+    if (role == "produtor") {
         return Pub
-        .find()
-        .where('visibility').equals('Privado')
-        .where('author').equals(mail)
-        .sort({author:1})
-        .exec()
+            .find()
+            .where('visibility').equals('Privado')
+            .where('author').equals(mail)
+            .sort({ author: 1 })
+            .exec()
     }
-    if(role=="consumidor")
-    {
+    if (role == "consumidor") {
         return Pub
-        .find()
-        .where('visibility').equals('Público')
-        .sort({author:1})
-        .exec()
+            .find()
+            .where('visibility').equals('Público')
+            .sort({ author: 1 })
+            .exec()
     }
 }
 
 //funçao para complementar o list dos produtores
 module.exports.list_aux = (mail) => {
     return Pub
-    .find( { 'author': { $ne: 'author' } } )
-    .where('visibility').equals('Público')
-    .sort({author:1})
-    .exec()
+        .find({ 'author': { $ne: 'author' } })
+        .where('visibility').equals('Público')
+        .sort({ author: 1 })
+        .exec()
 }
 
 
 //devolve as publicacoes de um autor
-module.exports.lookUp = author=> {
+module.exports.lookUp = author => {
     return Pub
-        .find({author: author })
+        .find({ author: author })
         .exec()
 }
 
@@ -133,41 +130,66 @@ module.exports.updatePubRating = (pub_id, newvalue) => {
 
 
 
-module.exports.insert= (author,description,visibility,resources)  => {
+module.exports.insert = (author, description, visibility, resources) => {
     data = new Date().toISOString()
     var newPub = new Pub()
-    newPub.author=author
-    newPub.description=description
-    newPub.visibility=visibility
-    newPub.resources=resources
-    newPub.data_created= data
+    newPub.author = author
+    newPub.description = description
+    newPub.visibility = visibility
+    newPub.resources = resources
+    newPub.data_created = data
     newPub.pub_rating = 0
     return newPub.save()
 }
- 
-module.exports.find_pub= (pub_date,pub_author) => {
 
-   return Pub
-   .findOne()
-   .where('author').equals(pub_author)
-   .where('data_created').equals(pub_date)
-   .sort({author:1})
-   .exec()
-}
-
-module.exports.update=(pub) => {
-    Pub.update({"author" : pub.author, "data_created": pub.data_created},
-    { $set:
-        {
-            "comments": pub.comments
-        }
-    })
-    .exec()
+module.exports.find_pub = (pub_date, pub_author) => {
 
     return Pub
-   .find({author: pub_author})
-   .where('data_created').equals(pub_date)
-   .sort({author:1})
-   .exec()
+        .findOne()
+        .where('author').equals(pub_author)
+        .where('data_created').equals(pub_date)
+        .sort({ author: 1 })
+        .exec()
+}
+
+module.exports.update = (pub) => {
+    Pub.update({ "author": pub.author, "data_created": pub.data_created },
+        {
+            $set:
+            {
+                "comments": pub.comments
+            }
+        })
+        .exec()
+
+    return Pub
+        .find({ author: pub_author })
+        .where('data_created').equals(pub_date)
+        .sort({ author: 1 })
+        .exec()
+}
+
+
+module.exports.find_pub_by_id = (pub_id) => {
+
+    return Pub
+        .findOne({ _id: pub_id })
+        .exec()
+}
+
+
+module.exports.edit_pub = (pub_id, pub) => {
+
+    return Pub
+        .updateOne({ _id: pub_id }, { $set: { resources: pub.resources, author: pub.author, description: pub.description, visibility: pub.visibility } })
+        .exec()
+}
+
+
+module.exports.delete_pub = (pub_id) => {
+
+    return Pub
+        .remove({ _id: pub_id })
+        .exec()
 }
 

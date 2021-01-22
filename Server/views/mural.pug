@@ -79,6 +79,10 @@ block content
                 .w3-col.s9.w3-border
                     input.w3-input.w3-border.w3-light-grey(type='text' id="input"+index)
                     input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Comentar')(onclick='add_comentario(' + '"' + utilizador.mail + '"' + ',' + '"'+ pub.author + '"' + ',' + '"'+   pub.data_created+ '"' + ',' + '"' + index + '"' + ')')     
+                if utilizador.role=="administrador" || (utilizador.role=="produtor" && utilizador.mail==pub.author) 
+                    .w3-col.s9.w3-border
+                        form.w3-container(action='/users/pubs/delete/'+pub.id  method='GET')
+                            input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Eliminar Publicação')
     else
         .w3-container.w3-blue
             h2.w3-center Ainda não existem publicações registadas 

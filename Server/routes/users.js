@@ -24,36 +24,36 @@ router.get('/registar', function (req, res) {
 });
 
 router.post('/registar', [
-body('mail', 'Endereço email inválido!').isEmail(),
-body('mail', 'Endereço email necessário!').notEmpty(),
-body('name', 'Nome necessário!').notEmpty(),
-body('course', 'Curso necessário!').notEmpty(),
-body('activity', 'Atividade necessária!').notEmpty(),
-body('department', 'Departamento necessário!').notEmpty(),
-body('password_enc', 'Password necessário!').notEmpty(),
-body('password_enc2', 'Passwords não coincidem!').custom((value, { req }) => {
-  if (value !== req.body.password_enc) {
-    throw new Error('Passwords não coincidem')
-  } else {
-    return value;
-  }}),
-body('mail','Email já se encontra registado!').custom(async (value,{req})=>{
-  await User.lookUp(req.body.mail)
-  .then(dados => {
-    if(dados)
-    {
-      console.log('\n\nEXISTE\n\n')
-      throw erro = new Error('Esse email já se encontra registado!')
+  body('mail', 'Endereço email inválido!').isEmail(),
+  body('mail', 'Endereço email necessário!').notEmpty(),
+  body('name', 'Nome necessário!').notEmpty(),
+  body('course', 'Curso necessário!').notEmpty(),
+  body('activity', 'Atividade necessária!').notEmpty(),
+  body('department', 'Departamento necessário!').notEmpty(),
+  body('password_enc', 'Password necessário!').notEmpty(),
+  body('password_enc2', 'Passwords não coincidem!').custom((value, { req }) => {
+    if (value !== req.body.password_enc) {
+      throw new Error('Passwords não coincidem')
+    } else {
+      return value;
     }
-    else{
-      console.log('\n\nNAO EXISTE\n\n')
-    }
+  }),
+  body('mail', 'Email já se encontra registado!').custom(async (value, { req }) => {
+    await User.lookUp(req.body.mail)
+      .then(dados => {
+        if (dados) {
+          console.log('\n\nEXISTE\n\n')
+          throw erro = new Error('Esse email já se encontra registado!')
+        }
+        else {
+          console.log('\n\nNAO EXISTE\n\n')
+        }
+      })
+      .catch(erro => {
+        erro = 'Esse email já se encontra registado!'
+        throw new Error('Esse email já se encontra registado!')
+      })
   })
-  .catch(erro=>{
-    erro='Esse email já se encontra registado!'
-    throw new Error('Esse email já se encontra registado!')
-  })
-})
 ], (req, res) => {
   var user = req.body
   var errors = validationResult(req).array();
@@ -68,12 +68,12 @@ body('mail','Email já se encontra registado!').custom(async (value,{req})=>{
   }
 });
 
-router.post('/validateEmail/',function(req,res){
-  User.lookUp(req.body.mail).then(user=>{
-    if(user){
-      res.render('registar',req.body)
+router.post('/validateEmail/', function (req, res) {
+  User.lookUp(req.body.mail).then(user => {
+    if (user) {
+      res.render('registar', req.body)
     }
-    else{
+    else {
       res.render('login')
     }
   })
@@ -89,7 +89,6 @@ router.get('/login', function (req, res) {
   console.log(req.sessionID)
   res.render('login')
 });
-
 
 router.post('/login', passport.authenticate('local'), function (req, res) {
 
@@ -165,7 +164,7 @@ router.get('/pubs/download/:fname/:autor', (req, res) => {
   else {
     res.send("Nao tens permissoes para aceder a esta pagina")
   }
-})
+});
 
 router.post('/pubs/rating/:pubid/:resourceid', function (req, res) {
   Pub.handleRating(req.params.pubid, req.params.resourceid, req.user.mail, function (err, obj) {
@@ -234,7 +233,6 @@ router.post('/pubs/rating/:pubid/:resourceid', function (req, res) {
   })
 });
 
-
 router.get('/pubs/upload', function (req, res) {
   if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
     var d = new Date().toISOString().substr(0, 16)
@@ -245,6 +243,48 @@ router.get('/pubs/upload', function (req, res) {
   }
 });
 
+router.get('/pubs/edit/:pubid', function (req, res) {
+  if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
+    Pub.find_pub_by_id(req.params.pubid)
+      .then(publicacao => {
+        res.render('pubs/edit', { pub: publicacao });
+      })
+      .catch(erro => done(erro))
+  }
+  else {
+    res.send("Nao tens permissoes para aceder a esta pagina")
+  }
+});
+
+router.post('/pubs/edit/:pubid', upload.array('myFile'), function (req, res) {
+  if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
+
+    Pub.find_pub_by_id(req.params.pubid)
+      .then(publicacao => {
+        publicacao.description = req.body.description;
+        publicacao.visibility = req.body.visibility;
+        var i;
+        for (i = 0; i < publicacao.resources.length; i++) {
+          if (publicacao.resources.length > 1) {
+            publicacao.resources[i].theme = req.body.theme[i]
+            publicacao.resources[i].title = req.body.title[i]
+          } else {
+            publicacao.resources[i].theme = req.body.theme
+            publicacao.resources[i].title = req.body.title
+          }
+        }
+        Pub.edit_pub(req.params.pubid, publicacao)
+          .then(() => {
+            res.redirect('/users/perfil')
+          })
+          .catch(erro => done(erro))
+      })
+      .catch(erro => done(erro))
+  }
+  else {
+    res.send("Nao tens permissoes para aceder a esta pagina")
+  }
+});
 
 router.post('/pubs', upload.array('myFile'), function (req, res) {
   if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
@@ -313,7 +353,28 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
     res.send("Nao tens permissoes para aceder a esta pagina")
   }
 
-})
+});
+
+router.get('/pubs/delete/:pubid', function (req, res) {
+  let fileStorePath = path.join(__dirname, '../public/fileStore/')
+  Pub.find_pub_by_id(req.params.pubid)
+    .then(publicacao => {
+      for (i = 0; i < publicacao.resources.length; i++) {
+        let filename = publicacao.resources[i].id + '.' + publicacao.resources[i].extension
+        let filePath = path.join(fileStorePath, publicacao.author, filename)
+
+        fs.unlink(filePath, (err) => {
+          if (err) throw err;
+        });
+      }
+      Pub.delete_pub(req.params.pubid)
+        .then(() => {
+          res.redirect('/mural')
+        })
+        .catch(erro => done(erro))
+    })
+    .catch(erro => done(erro))
+});
 
 //#endregion
 
@@ -335,17 +396,17 @@ router.get('/perfil', function (req, res) {
 });
 
 router.get('/perfis/:mail', function (req, res) {
-  perfil = req.params.mail
-  user = req.user.mail
-  role = req.user.role
+  let perfil = req.params.mail;
+  let p_user = req.user.mail;
+  let role = req.user.role;
 
 
   //verificar se o perfil do dono da publicaçao é o proprio
-  if (user == perfil) {
+  if (p_user == perfil) {
     console.log("aaaaaaa")
-    User.lookUp(user)
+    User.lookUp(p_user)
       .then(utilizador => {
-        Pub.lookUp(user)
+        Pub.lookUp(p_user)
           .then(publicacoes => {
             res.render('perfil', { utilizador: utilizador, pubs: publicacoes });
           })
@@ -383,6 +444,27 @@ router.get('/perfis/:mail', function (req, res) {
   }
 
 
+});
+
+router.get('/perfil/delete/:pubid', function (req, res) {
+  let fileStorePath = path.join(__dirname, '../public/fileStore/')
+  Pub.find_pub_by_id(req.params.pubid)
+    .then(publicacao => {
+      for (i = 0; i < publicacao.resources.length; i++) {
+        let filename = publicacao.resources[i].id + '.' + publicacao.resources[i].extension
+        let filePath = path.join(fileStorePath, publicacao.author, filename)
+
+        fs.unlink(filePath, (err) => {
+          if (err) throw err;
+        });
+      }
+      Pub.delete_pub(req.params.pubid)
+        .then(() => {
+          res.redirect('/users/perfil')
+        })
+        .catch(erro => done(erro))
+    })
+    .catch(erro => done(erro))
 });
 
 //#endregion
@@ -434,7 +516,6 @@ router.post('/recusar-pedido/:mail', function (req, res) {
 });
 
 //#endregion
-
 
 router.post('/adicionar_comentario', function (req, res) {
   var d = new Date().toISOString().substr(0, 16)

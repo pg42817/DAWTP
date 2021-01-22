@@ -1,0 +1,42 @@
+extends layout
+
+block content
+    .w3-container.w3-blue
+        h2 Editar publicaçao
+    form.w3-container(action='/users/pubs/edit/'+pub.id method='POST' enctype='multipart/form-data')
+        #1st_File.w3-row.w3-margin-bottom
+            .w3-row.w3-margin-bottom
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Descricao da publicação
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='text' name='description' value=pub.description)
+            .w3-row.w3-margin-bottom
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Visibilidade
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(list="list" name="visibility" id="visibility" value=pub.visibility)
+                    datalist(id="list")
+                        option(value="Privado")
+                        option(value="Público")
+            each recurso in pub.resources
+                .w3-row.w3-margin-bottom
+                    .w3-col.s3
+                        label.w3-text-blue
+                            b Tema
+                    .w3-col.s9.w3-border
+                        input.w3-input.w3-border.w3-light-grey(type='text' name='theme' value=recurso.theme)
+                .w3-row.w3-margin-bottom
+                    .w3-col.s3
+                        label.w3-text-blue
+                            b Titulo
+                    .w3-col.s3.w3-border
+                        input.w3-input.w3-border.w3-light-grey(type='text' name='title' value=recurso.title)
+                .w3-row.w3-margin-bottom
+                    .w3-col.s3
+                        button.w3-btn.w3-blue-grey(type='button' onclick='showFile(' + '"' + recurso.id + '"' + ','+ '"' + recurso.extension + '"' + ','+ '"' +  pub.author + '"' + ',' + '"' + recurso.title + '"' + ')') Pré-Visualizar Ficheiro
+        input.w3-btn.w3-blue-grey(type='submit' value='Submit')
+    footer.w3-container.w3-blue
+        address Gerado por galuno::DAW2020 em #{d}
+
