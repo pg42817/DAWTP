@@ -6,7 +6,7 @@ block content
         h3.w3-left Registar utilizador
     
     if errors
-      each error, i in errors
+      each error in errors
         #{console.log(error.msg)}
         p #{error.msg}
     form.w3-container(action='/users/registar', method='POST')

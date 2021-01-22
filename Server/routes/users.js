@@ -43,13 +43,16 @@ body('mail','Email já se encontra registado!').custom(async (value,{req})=>{
     if(dados)
     {
       console.log('\n\nEXISTE\n\n')
-      throw new Error('Esse email já se encontra registado!')
+      throw erro = new Error('Esse email já se encontra registado!')
     }
     else{
       console.log('\n\nNAO EXISTE\n\n')
     }
   })
-  .catch(erro => done(erro))
+  .catch(erro=>{
+    erro='Esse email já se encontra registado!'
+    throw new Error('Esse email já se encontra registado!')
+  })
 })
 ], (req, res) => {
   var user = req.body
