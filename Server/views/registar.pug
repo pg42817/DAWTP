@@ -1,38 +1,63 @@
 extends layout
 
 block content
-  .w3-container.w3-margin.w3-border
+  <div class="w3-bar w3-blue w3-xlarge">
+  <a href="/" class="w3-bar-item w3-button" style="float: right">Página Principal</a>
+  <a href="/users/login" class="w3-bar-item w3-button"  style="float: right";>Login</a>
+  </div>
+  br
+  br
+
+  <div class="w3-container w3-half w3-margin-top w3-display-topmiddle" style="top:100px">
+   
     .w3-container.w3-blue
-        h3.w3-left Registar utilizador
+      h2.w3-center Formulário de Registo
     
+    <form class="w3-container w3-card-4"  action="/users/registar" method="POST">
+
     if errors
       each error in errors
         #{console.log(error.msg)}
-        p #{error.msg}
-    form.w3-container(action='/users/registar', method='POST')
-            | Mail: 
-            input.w3-input(type='text', name='mail', value='')
-            | Nome: 
-            input.w3-input(type='text', name='name', value='')
-            | Curso: 
-            input.w3-input(type='text', name='course', value='')
-            br
-            | Atividade: 
-            <input list="activitys" name="activity" id="activity">
-            <datalist id="activitys">
-              <option value="Estudante">
-              <option value="Profesor">
-            </datalist>
-            br
-            br
-            | Departamento:
-            input.w3-input(type='text', name='department', value='')
-            | Password: 
-            input.w3-input(type="password", name='password_enc', value='')
-            | Confirmar Password: 
-            input.w3-input(type="password", name='password_enc2', value='')
-            input.w3-btn.w3-blue(type='submit', value='Adicionar')
-   
+        <div class="w3-panel w3-red">
+          p #{error.msg}
+        </div> 
+        
 
+    <p>
+    <input class="w3-input" type="text" name="mail" style="width:90%" required>
+    <label class="w3-label w3-validate">Email</label></p>
 
+    <p>
+    <input class="w3-input" type="text" name="name" style="width:90%" required>
+    <label class="w3-label w3-validate">Nome</label></p>
 
+    <p>
+    <input class="w3-input" type="text" name="course" style="width:90%" required>
+    <label class="w3-label w3-validate">Curso</label></p>
+    
+    <br>
+      | Atividade: 
+      <select name="activity" id="activity" required>
+        <option value="Estudante"> Estudante
+        <option value="Professor"> Professor
+      </datalist>
+    <br>
+
+    <p>
+    <input class="w3-input" type="text" name="department" style="width:90%" required>
+    <label class="w3-label w3-validate">Departamento</label></p>
+
+    <p>
+    <input class="w3-input" type="password", name="password_enc" style="width:90%" required>
+    <label class="w3-label w3-validate">Password</label></p>
+
+    <p>
+    <input class="w3-input" type="password", name="password_enc2" style="width:90%" required>
+    <label class="w3-label w3-validate">Confirmar Password</label></p>
+
+    <p>
+    <button class="w3-btn w3-section w3-blue w3-ripple w3-auto" style="display: flex; justify-content: center": center> Registar </button></p>
+
+  </form>
+  <p>Já tem conta? Faça login <a href='/users/login'>aqui</a>
+  </div>

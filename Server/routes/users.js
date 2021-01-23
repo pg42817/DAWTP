@@ -63,7 +63,7 @@ router.post('/registar', [
   }
   else {
     User.insert(user)
-      .then(data => res.render('login'))
+      .then(data => res.redirect('/users/login'))
       .catch(err => res.render('error', { error: err }))
   }
 });
@@ -87,18 +87,21 @@ router.post('/validateEmail/', function (req, res) {
 router.get('/login', function (req, res) {
   console.log('Na cb do GET login...')
   console.log(req.sessionID)
-  res.render('login')
+  res.render('login',{message: req.flash('loginMessage')})
 });
 
-router.post('/login', passport.authenticate('local'), function (req, res) {
-
+router.post('/login', passport.authenticate('local',{
+  failureRedirect: '/users/login',
+  failureFlash : true
+}), function (req, res) {
+  console.log("\n\nOK\n\n")
   //alterar a data do last_login
-  req.user.data_last_login = new Date().toISOString().substr(0, 16)
+  req.user.data_last_login = new Date().toLocaleDateString('pt-PT', { hour: '2-digit',minute:'2-digit', second:'2-digit', hour12: false })
   User.update_last_login(req.user)
     .then(dados => {
     })
     .catch(erro => done(erro))
-
+  console.log()
   console.log('Na cb do POST login...')
   console.log('Do form: ' + JSON.stringify(req.body))
   console.log('Do passport: ' + JSON.stringify(req.user))

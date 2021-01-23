@@ -7,6 +7,7 @@ var mongoose = require('mongoose')
 var User = require('../Server/controllers/user')
 var CryptoJS = require('crypto-js')
 var key= "ASECRET"
+var flash = require('connect-flash');
 
 //#region mongoose Configuration
 //Set up default mongoose connection
@@ -36,14 +37,14 @@ var axios = require('axios')
 
 // Configuração da estratégia local
 passport.use(new LocalStrategy(
-  {usernameField: 'id'}, function(id, password, done) {
+  {usernameField: 'id',passReqToCallback: true}, function(req,id, password, done) {
     User.lookUp(id)
       .then(dados => {
         const user = dados
+        if(!user) { return done(null, false, req.flash('loginMessage','Utilizador inexistente!'))}
         var decipher = CryptoJS.AES.decrypt(user.password_enc, key);
         decipher = decipher.toString(CryptoJS.enc.Utf8);
-        if(!user) { return done(null, false, {message: 'Utilizador inexistente!\n'})}
-        if(password != decipher) { return done(null, false, {message: 'Credenciais inválidas!\n'})}
+        if(password != decipher) { return done(null, false, req.flash('loginMessage','Password errada!'))}
         return done(null, user)
       })
       .catch(erro => done(erro))
@@ -73,7 +74,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
-
+app.use(flash());
 //#region session
 app.use(session({
   genid: function(req) {
