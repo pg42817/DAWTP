@@ -87,11 +87,14 @@ router.post('/validateEmail/', function (req, res) {
 router.get('/login', function (req, res) {
   console.log('Na cb do GET login...')
   console.log(req.sessionID)
-  res.render('login')
+  res.render('login',{message: req.flash('loginMessage')})
 });
 
-router.post('/login', passport.authenticate('local'), function (req, res) {
-
+router.post('/login', passport.authenticate('local',{
+  failureRedirect: '/users/login',
+  failureFlash : true
+}), function (req, res) {
+  console.log("\n\nOK\n\n")
   //alterar a data do last_login
   req.user.data_last_login = new Date().toISOString().substr(0, 16)
   User.update_last_login(req.user)
