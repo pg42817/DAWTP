@@ -2,87 +2,83 @@ extends layout
 
 
 block content
-    <div>
-        form.w3-container(action='/users/logout' method='GET')
-            input.w3-btn.w3-right.w3-right.w3-blue-grey(type='submit' value='Logout')
-        form.w3-container(action='/users/perfil'  method='GET')
-            input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Perfil')
-        form.w3-container(action='/users/news'  method='GET')
-            input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Notícias')
+    <div class="w3-bar w3-blue w3-xlarge">
+    <a href="/users/news" class="w3-bar-item w3-button ">Notícias</a> 
+    <a href="/users/logout" class="w3-bar-item w3-button" style="float: right";>Logout</a>
+    <a href="/users/perfil" class="w3-bar-item w3-button" style="float: right";>Perfil</a>
+   
+    h2.w3-center Lista de publicações
     </div>
-
     if(pubs.length>0)
         #display.w3-card-4.modal.w3-animate-top(style=" width:100%; height=100%; overflow: auto; ")
-        .w3-container.w3-blue
-            h2.w3-center Lista de publicações
         - var check = true;
         each pub, index in pubs 
-            .card
-                .w3-row.w3-margin-bottom
-                    .w3-col.s3
-                        label.w3-text-blue
-                            b Autor
-                    .w3-col.s9.w3-border
-                        form.w3-container(action='/users/perfis/'+pub.author  method='GET')
-                            input.w3-input.w3-border.w3-light-grey.w3-left-align(type='submit' name='author' value=pub.author readonly="readonly")
-                    .w3-col.s3
-                        label.w3-text-blue
-                            b Descrição
-                    .w3-col.s9.w3-border
-                        input.w3-input.w3-border.w3-light-grey(type='text' name='description' value=pub.description readonly="readonly")
-                    .w3-col.s3
-                        label.w3-text-blue
-                            b Avaliação da Publicação
-                    .w3-col.s9.w3-border
-                        input.w3-input.w3-border.w3-light-grey(type='text' name='rating' value=pub.pub_rating readonly="readonly")
-                    .w3-col.s3
-                        label.w3-text-blue
-                            b Recursos
-                each recurso in pub.resources  
-                    - var check = true; 
-                        .w3-col.s3
-                            label.w3-text-blue
-                                b Titulo
-                        .w3-col.s9.w3-border
-                            input.w3-input.w3-border.w3-light-grey(type='text' name='title' value=recurso.title readonly="readonly")(onclick='showFile(' + '"' + recurso.id + '"' + ','+ '"' + recurso.extension + '"' + ','+ '"' +  pub.author + '"' + ',' + '"' + recurso.title + '"' + ')')                     
-                        .w3-col.s3
-                            label.w3-text-blue
-                                b Avaliação do Recurso
-                        .w3-col.s9.w3-border
-                            input.w3-input.w3-border.w3-light-grey(type='text' name='rating' value=recurso.rating readonly="readonly")
-                        each rating in recurso.rating_list
-                            if check && (rating.rating_mail == utilizador.mail)
-                                - check=false
-                                .w3-col.s3
-                                    label.w3-text-blue
-                                        b Minha Avaliação do Recurso
-                                .w3-col.s9.w3-border
-                                    input.w3-input.w3-border.w3-light-grey(type='text' name='rating' value=rating.value readonly="readonly")(onclick='giveRating(' + '"' + pub.id + '"' + ','+ '"' +  recurso.id + '"' + ')')
-                        if check
-                            .w3-col.s3
-                                label.w3-text-blue
-                                    b Minha Avaliação do Recurso
-                            .w3-col.s9.w3-border
-                                input.w3-input.w3-border.w3-light-grey(type='text' name='rating'  readonly="readonly")(onclick='giveRating(' + '"' + pub.id + '"' + ','+ '"' +  recurso.id + '"' + ')')
-                <br>
-                <br>
-                <br>
-                .w3-col.s3
-                        label.w3-text-blue
-                            b Comentários
-                .w3-col.s9.w3-border
-                        each comentario in pub.comments
-                            input.w3-input.w3-border.w3-light-grey(type='text' value=comentario.author_mail+ ' - ' +comentario.text readonly="readonly")
-                        <div id=#{index}>
+            <div class="w3-container  w3-margin-top" style="top:100px">
+                <div class="w3-container w3-card-4" >
+                    <div class="w3-panel w3-blue"  style="display: flex; justify-content: center">
+                        a.w3-bar-item.w3-button(href='/users/perfis/'+pub.author) Publicação de #{pub.author} - #{pub.data_created.substr(0,10)}
+                    </div> 
+                    
+                    h4.w3-text-blue 
+                        b #{pub.description}
+                    <div style="display:flex; flex-direction: row; justify-content: left; align-items: center">
+                        b.w3-text-blue Rating: 
+                        <div class="w3-panel w3-round-xxlarge w3-blue" style="text-align:center;width:5%;">
+                            b #{pub.pub_rating}
                         </div>
+                    </div>
+                    h4.w3-text-blue 
+                        b Recursos
+                    <div class="w3-row">
+                        each recurso in pub.resources
+                            - var check = true; 
+                            <div class="w3-col.w3-blue.w3-border.w3-border-white.w3-center">
+                                b #{recurso.title}
+                                div.w3-white.w3-text-blue(type='text' name='title' value=recurso.title readonly="readonly")(onclick='showFile(' + '"' + recurso.id + '"' + ','+ '"' + recurso.extension + '"' + ','+ '"' +  pub.author + '"' + ',' + '"' + recurso.title + '"' + ')') 
+                                    b Preview
+                                <div class="w3-white" style="display:flex; flex-direction: row; justify-content: left; align-items: center">
+                                    b.w3-text-blue Rating: 
+                                    <div class="w3-panel w3-round-xxlarge w3-blue" style="text-align:center;width:auto;">
+                                        <b> #{pub.pub_rating}
+                                </div>
+                            </div>      
+                            each rating in recurso.rating_list
+                                if check && (rating.rating_mail == utilizador.mail)
+                                - check=false
+                                    <div class="w3-white" style="display:flex; flex-direction: row; justify-content: left; align-items: center">
+                                        <b class="w3-text-blue">  Minha Avaliação do Recurso: 
+                                        <div class="w3-panel w3-round-xxlarge w3-blue" style="text-align:center;width:auto;">
+                                            b(onclick='giveRating(' + '"' + pub.id + '"' + ','+ '"' +  recurso.id + '"' + ')') #{rating.value}
+                                    </div>    
+                            if check
+                                <div class="w3-white" style="display:flex; flex-direction: row; justify-content: left; align-items: center">
+                                    <b class="w3-text-blue"> Minha Avaliação do Recurso: 
+                                    <div class="w3-panel w3-round-xxlarge w3-blue" style="text-align:center;width:auto;">
+                                        b(onclick='giveRating(' + '"' + pub.id + '"' + ','+ '"' +  recurso.id + '"' + ')') -
+                                </div>
+                        </div>                               
+                    </div>  
+                </div>
                 
-                .w3-col.s9.w3-border
-                    input.w3-input.w3-border.w3-light-grey(type='text' id="input"+index)
-                    input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Comentar')(onclick='add_comentario(' + '"' + utilizador.mail + '"' + ',' + '"'+ pub.author + '"' + ',' + '"'+   pub.data_created+ '"' + ',' + '"' + index + '"' + ')')     
-                if utilizador.role=="administrador" || (utilizador.role=="produtor" && utilizador.mail==pub.author) 
+                
+                <div class="w3-panel w3-blue"  style="display: flex; justify-content:center;"> Comentários</div>
+                    .w3-border(style="justify-content:center;align-items:center;")
+                        each comentario in pub.comments
+                            a.w3-text-blue(style="text-align:center;width:auto;")(href='/users/perfis/'+pub.author) #{comentario.author_mail}  
+                            <div class="w3-panel w3-round-xxlarge w3-blue" style="text-align:left;width:auto;"> #{comentario.text}</div> 
                     .w3-col.s9.w3-border
-                        form.w3-container(action='/users/pubs/delete/'+pub.id  method='GET')
-                            input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Eliminar Publicação')
+                        input.w3-input(type='text' placeholder="Escrever comentário" id="input"+index)
+                        input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Comentar')(onclick='add_comentario(' + '"' + utilizador.mail + '"' + ',' + '"'+ pub.author + '"' + ',' + '"'+   pub.data_created+ '"' + ',' + '"' + index + '"' + ')')      
+                </div>
+                if utilizador.role=="administrador" || (utilizador.role=="produtor" && utilizador.mail==pub.author) 
+                            .w3-col.s9.w3-border
+                                form.w3-container(action='/users/pubs/delete/'+pub.id  method='GET')
+                                    input.w3-btn.w3-left.w3-left.w3-red(type='submit' value='Eliminar Publicação')
+                </div> 
+            </div>
+            </div>
+        </div>
+                
     else
         .w3-container.w3-blue
-            h2.w3-center Ainda não existem publicações registadas 
+            h2.w3-center Ainda não existem publicações registadas

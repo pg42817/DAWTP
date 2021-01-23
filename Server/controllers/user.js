@@ -25,7 +25,7 @@ module.exports.list_pedidos_produtor=() => {
 }
 
 module.exports.insert = user => {
-    data = new Date().toISOString().substr(0,16)
+    data = new Date().toLocaleDateString('pt-PT', { hour: '2-digit',minute:'2-digit', second:'2-digit', hour12: false })
     var cipher = CryptoJS.AES.encrypt(user.password_enc,key)
     cipher=cipher.toString();
     var newUser = new User(user)

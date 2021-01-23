@@ -43,7 +43,16 @@ block content
                         b Papel
                 .w3-col.s9.w3-border
                     input.w3-input.w3-border.w3-light-grey(type='text' name='role' value=utilizador.role readonly="readonly")
-
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Data Registo
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='text' name='role' value=utilizador.data_register readonly="readonly")
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Último Login
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='text' name='role' value=utilizador.data_last_login readonly="readonly")
 
     if(pubs.length>0)
         #display.w3-card-4.modal

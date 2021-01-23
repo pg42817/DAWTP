@@ -35,7 +35,7 @@ block content
                     input.w3-input.w3-border.w3-light-grey(type='text' name='activity' value=utilizador.activity readonly="readonly")
                 .w3-col.s3
                     label.w3-text-blue
-                        b curso
+                        b Curso
                 .w3-col.s9.w3-border
                     input.w3-input.w3-border.w3-light-grey(type='text' name='course' value=utilizador.course readonly="readonly")
                 .w3-col.s3
@@ -48,6 +48,17 @@ block content
                         b Papel
                 .w3-col.s9.w3-border
                     input.w3-input.w3-border.w3-light-grey(type='text' name='role' value=utilizador.role readonly="readonly")
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Data Registo
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='text' name='role' value=utilizador.data_register readonly="readonly")
+                .w3-col.s3
+                    label.w3-text-blue
+                        b Último Login
+                .w3-col.s9.w3-border
+                    input.w3-input.w3-border.w3-light-grey(type='text' name='role' value=utilizador.data_last_login readonly="readonly")
+                
 
 
     if(pubs.length>0)
@@ -81,7 +92,7 @@ block content
                             label.w3-text-blue
                                 b Titulo
                         .w3-col.s9.w3-border
-                            input.w3-input.w3-border.w3-light-grey(type='text' name='title' value=recurso.title readonly="readonly")(onclick='showFile(' + '"' + recurso.id + '"' + ','+ '"' + recurso.extension + '"' + ','+ '"' +  pub.author + '"' + ',' + '"' + recurso.title + '"' + ')')
+                            input.w3-input.w3-border.w3-light-grey(type='text' name='title' value=recurso.title readonly="readonly")(onclick='showImage(' + '"' + recurso.id + '"' + ','+ '"' + recurso.extension + '"' + ','+ '"' +  pub.author + '"' + ',' + '"' + recurso.title + '"' + ')')                     
                         .w3-col.s3
                                 label.w3-text-blue
                                     b Avaliação do Recurso
@@ -109,7 +120,7 @@ block content
                 if utilizador.role=="produtor" && utilizador.mail==pub.author
                     .w3-col.s9.w3-border
                         form.w3-container(action='/users/pubs/edit/'+pub.id  method='GET')
-                            input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Editar Publicação')
+                            input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Editar Publicação') 
     else
         .w3-container.w3-blue
-            h2.w3-center Não tens publicações registadas
+            h2.w3-center Não tens publicações registadas 
