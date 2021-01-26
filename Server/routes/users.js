@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var User = require('../controllers/user')
 var Pub = require('../controllers/pub')
-var jsonfile = require('jsonfile')
 var fs = require('fs')
 var path = require('path')
 var passport = require('passport')
@@ -13,10 +12,8 @@ var fse = require('fs-extra')
 var mime = require('mime-types')
 var CryptoJS = require('crypto-js');
 const { body, validationResult } = require('express-validator');
-const { Console } = require('console');
-const { CONNREFUSED } = require('dns');
-const user = require('../models/user');
 var upload = multer({ dest: 'uploads/' })
+
 //#region Registo
 router.get('/registar', function (req, res) {
   res.render('registar')
@@ -191,8 +188,13 @@ router.post('/pubs/rating/:pubid/:resourceid', function (req, res) {
                       } else {
                         var avg_pub_rating = (result[0]['sumRatings']) / (result[0]['numRatings'])
                         Pub.updatePubRating(req.params.pubid, avg_pub_rating)
-                          .then(() => {
-                            res.redirect('/mural')
+                          .then(() =>{
+                            Pub.find_pub_by_id(req.params.pubid)
+                              .then(publicacao => {
+                                console.log(publicacao)
+                                res.render('pubs/info', { pub:publicacao,utilizador: req.user });
+                            })
+                            .catch(erro => done(erro))
                           })
                           .catch(erro => done(erro))
                       }
@@ -219,10 +221,15 @@ router.post('/pubs/rating/:pubid/:resourceid', function (req, res) {
                       } else {
                         var avg_pub_rating = (result[0]['sumRatings']) / (result[0]['numRatings'])
                         Pub.updatePubRating(req.params.pubid, avg_pub_rating)
-                          .then(() => {
-                            res.redirect('/mural')
+                        .then(() =>{
+                            Pub.find_pub_by_id(req.params.pubid)
+                            .then(publicacao => {
+                              console.log(publicacao)
+                              res.render('pubs/info', { pub:publicacao,utilizador: req.user });
                           })
                           .catch(erro => done(erro))
+                        })
+                        .catch(erro => done(erro))
                       }
                     })
                   })
@@ -379,6 +386,14 @@ router.get('/pubs/delete/:pubid', function (req, res) {
     .catch(erro => done(erro))
 });
 
+router.get('/pub/:pubid', function (req, res) {
+  Pub.find_pub_by_id(req.params.pubid)
+    .then(publicacao => {
+      res.render('pubs/info', { pub:publicacao,utilizador: req.user });
+    })
+    .catch(erro => done(erro))
+});
+
 //#endregion
 
 //#region perfis
@@ -418,7 +433,6 @@ router.get('/perfis/:mail', function (req, res) {
       .catch(erro => done(erro))
   }
   else {
-    console.log("bbbbbbb")
     User.lookUp(perfil)
       .then(utilizador => {
         Pub.list(mail, role)

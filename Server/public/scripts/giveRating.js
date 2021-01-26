@@ -1,5 +1,5 @@
 function giveRating(pub_id, resource_id) {
-
+    
     var myRating = $(`
 <form class="w3-container" action="/users/pubs/rating/${pub_id}/${resource_id}" method="POST">
     <div class="w3-row w3-margin-bottom">

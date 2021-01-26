@@ -1,58 +1,39 @@
 extends layout
 
-
 block content
-    <div>
-        form.w3-container(action='/users/logout' method='GET')
-            input.w3-btn.w3-right.w3-right.w3-blue-grey(type='submit' value='Logout')
-        form.w3-container(action='/mural'  method='GET')
-            input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Mural')
+    <div class="w3-bar w3-blue w3-large">
+        <a href="/mural" class="w3-bar-item w3-button ">Mural</a> 
+        <a href="/users/logout" class="w3-bar-item w3-button" style="float: right";>Logout</a>
+        <a href="/users/perfil" class="w3-bar-item w3-button" style="float: right";>Perfil</a>
     </div>
 
-    #display.w3-card-4.modal
-    .w3-container.w3-blue
-        h2.w3-center Noticias
     
-    if (pubs.length>0)
-        .w3-container.w3-blue
-            h1.w3-center Publicações registadas nas últimas 24 horas
-        each pub, index in pubs 
-            .card
-                .w3-row.w3-margin-bottom
-                    .w3-col.s3
-                        label.w3-text-blue
-                            b Autor
-                    .w3-col.s9.w3-border
-                        input.w3-input.w3-border.w3-light-grey(type='text' name='author' value=pub.author readonly="readonly")
-                    .w3-col.s3
-                        label.w3-text-blue
-                            b Descrição
-                    .w3-col.s9.w3-border
-                        input.w3-input.w3-border.w3-light-grey(type='text' name='description' value=pub.description readonly="readonly")
-                    .w3-col.s3
-                        label.w3-text-blue
-                            b Recursos
-                each recurso in pub.resources   
-                        .w3-col.s3
-                            label.w3-text-blue
-                            b Titulo
-                        .w3-col.s9.w3-border
-                            input.w3-input.w3-border.w3-light-grey(type='text' name='title' value=recurso.title readonly="readonly")(onclick='showImage(' + '"' + recurso.id + '"' + ','+ '"' + recurso.extension + '"' + ','+ '"' +  pub.author + '"' + ',' + '"' + recurso.title + '"' + ')')                     
+    if(pubs.length>0)
+        #display.w3-card-4.modal
+        - var check = true;
+        <div class="w3-container w3-margin-top  w3-display-topmiddle" style="top:80px" >
+            each pub,index in pubs
+                .w3-container.w3-blue
+                        a.w3-bar-item.w3-button(href='/users/pub/'+pub.id, style="display: flex; justify-content: center") #{pub.author} -  #{pub.data_created.substr(0,16).replace("T", " ")}
+                <div class="w3-container w3-card-4" style="width:1000px">
+                    <p style="text-align: justify;text-justify: inter-word;"> #{pub.description}</p>   
+                    <p> Avaliação da publicação: #{pub.pub_rating}     </p>  
+                    <br>
+                    <label class="w3-label">Comentários</label>
+                    each comentario in pub.comments
+                        <p style="display: flex; justify-content: left"> #{comentario.author_mail} - #{comentario.text}</p>  
+                    <div id=#{index}>
+                    </div>
+                    <div>
+                        input.w3-input.w3-border.w3-light-grey(type='text' id="input"+index style="display: inline-block;width: 810px;")
+                        input.w3-btn.w3-left.w3-left.w3-blue-grey.w3-right(type='submit' style="display: inline-block;width: 150px;" value='Comentar')(onclick='add_comentario(' + '"' + utilizador.mail + '"' + ',' + '"'+ pub.author + '"' + ',' + '"'+   pub.data_created+ '"' + ',' + '"' + index + '"' + ')')     
+                    </div>
+                </div>
                 <br>
                 <br>
-                <br>
-                .w3-col.s3
-                        label.w3-text-blue
-                            b Comentários
-                .w3-col.s9.w3-border
-                        each comentario in pub.comments
-                            input.w3-input.w3-border.w3-light-grey(type='text' value=comentario.author_mail+ ' - ' +comentario.text readonly="readonly")
-                        <div id=#{index}>
-                        </div>
-                
-                .w3-col.s9.w3-border
-                    input.w3-input.w3-border.w3-light-grey(type='text' id="input"+index)
-                    input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Comentar')(onclick='add_comentario(' + '"' + utilizador.mail + '"' + ',' + '"'+ pub.author + '"' + ',' + '"'+   pub.data_created+ '"' + ',' + '"' + index + '"' + ')')     
+        </div>
     else
+        br
+        br
         .w3-container.w3-blue
-            h2.w3-center Não existem publicações registadas nas ultimas 24 horas
+            h2.w3-center Não tens publicações registadas 
