@@ -435,25 +435,11 @@ router.get('/perfis/:mail', function (req, res) {
   else {
     User.lookUp(perfil)
       .then(utilizador => {
-        Pub.list(mail, role)
-          .then(pubs => {
-            //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
-            if (role == "produtor") {
-              Pub.list_aux(perfil)
-                .then(publicacoes => {
-                  var p = []
-                  publicacoes.forEach(element => {
-                    p.push(element)
-                  });
-                  pubs.forEach(element => {
-                    p.push(element)
-                  });
-                  res.render('perfis', { utilizador: utilizador, pubs: p });
-                })
-            }
-            else {
-              res.render('perfis', { utilizador: utilizador, pubs });
-            }
+        console.log(utilizador)
+        Pub.lookUp(perfil,role)
+          .then(publicacoes => {
+            console.log("aquiAQUI")
+            res.render('perfis', { utilizador: utilizador, pubs: publicacoes, myuser:req.user });
           })
           .catch(erro => done(erro))
       })
@@ -540,6 +526,7 @@ router.post('/adicionar_comentario', function (req, res) {
   pub_date = req.body.data
   text = req.body.text
   author = req.body.author
+  console.log("AUTOR" +author)
   pub_author = req.body.pub_author
 
   Pub.find_pub(pub_date, pub_author)
@@ -550,7 +537,7 @@ router.post('/adicionar_comentario', function (req, res) {
         "data": d
       }
       dados.comments.push(comentario)
-
+      console.log(comentario)
       Pub.update(dados)
         .then(dados => {
         })

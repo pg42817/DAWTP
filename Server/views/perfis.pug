@@ -2,110 +2,80 @@ extends layout
 
 block content
     <div>
-        form.w3-container(action='/users/logout' method='GET')
-            input.w3-btn.w3-right.w3-right.w3-blue-grey(type='submit' value='Logout')
-        form.w3-container(action='/mural'  method='GET')
-            input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Mural')
-        if utilizador.role=="administrador" || utilizador.role=="produtor"
-            form.w3-container(action='/users/pubs/upload'  method='GET')
-                input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Criar publicação')
+        <div class="w3-bar w3-blue w3-large">
+        <a href="/users/news" class="w3-bar-item w3-button ">Notícias</a> 
+        <a href="/mural" class="w3-bar-item w3-button ">Mural</a> 
+        <a href="/users/logout" class="w3-bar-item w3-button" style="float: right";>Logout</a>
+        <a href="javascript:history.back()" class="w3-bar-item w3-button" style="float: right">Página Anterior</a>
     </div>
-    .w3-row.w3-margin-bottom
-                .w3-container.w3-blue
-                    h2.w3-center Dados Pessoais
-                .w3-col.s3
-                    label.w3-text-blue
-                        b Name
-                .w3-col.s9.w3-border
-                    input.w3-input.w3-border.w3-light-grey(type='text' name='name' value=utilizador.name readonly="readonly")
-                .w3-col.s3
-                    label.w3-text-blue
-                        b Email
-                .w3-col.s9.w3-border
-                    input.w3-input.w3-border.w3-light-grey(type='text' name='mail' value=utilizador.mail readonly="readonly")
-                .w3-col.s3
-                    label.w3-text-blue
-                        b Atividade
-                .w3-col.s9.w3-border
-                    input.w3-input.w3-border.w3-light-grey(type='text' name='activity' value=utilizador.activity readonly="readonly")
-                .w3-col.s3
-                    label.w3-text-blue
-                        b curso
-                .w3-col.s9.w3-border
-                    input.w3-input.w3-border.w3-light-grey(type='text' name='course' value=utilizador.course readonly="readonly")
-                .w3-col.s3
-                    label.w3-text-blue
-                        b Departamento
-                .w3-col.s9.w3-border
-                    input.w3-input.w3-border.w3-light-grey(type='text' name='department' value=utilizador.department readonly="readonly")
-                .w3-col.s3
-                    label.w3-text-blue
-                        b Papel
-                .w3-col.s9.w3-border
-                    input.w3-input.w3-border.w3-light-grey(type='text' name='role' value=utilizador.role readonly="readonly")
-                .w3-col.s3
-                    label.w3-text-blue
-                        b Data Registo
-                .w3-col.s9.w3-border
-                    input.w3-input.w3-border.w3-light-grey(type='text' name='role' value=utilizador.data_register readonly="readonly")
-                .w3-col.s3
-                    label.w3-text-blue
-                        b Último Login
-                .w3-col.s9.w3-border
-                    input.w3-input.w3-border.w3-light-grey(type='text' name='role' value=utilizador.data_last_login readonly="readonly")
-
+    <div class="w3-container w3-margin-top  w3-display-topmiddle" style="top:60px" >
+        .w3-container.w3-blue.w3-center
+            <h5 classe="w3-blue">Dados pessoais</h5>
+        <div class="w3-container w3-card-4" style="width:1000px">
+            .w3-col.s3
+                label.w3-text-blue
+                    b Nome
+            .w3-col.s9.w3-border
+                input.w3-input.w3-border.w3-light-grey(type='text' name='name' value=utilizador.name readonly="readonly")
+            .w3-col.s3
+                label.w3-text-blue
+                    b Email
+            .w3-col.s9.w3-border
+                input.w3-input.w3-border.w3-light-grey(type='text' name='mail' value=utilizador.mail readonly="readonly")
+            .w3-col.s3
+                label.w3-text-blue
+                    b Atividade
+            .w3-col.s9.w3-border
+                input.w3-input.w3-border.w3-light-grey(type='text' name='activity' value=utilizador.activity readonly="readonly")
+            .w3-col.s3
+                label.w3-text-blue
+                    b Curso
+            .w3-col.s9.w3-border
+                input.w3-input.w3-border.w3-light-grey(type='text' name='course' value=utilizador.course readonly="readonly")
+            .w3-col.s3
+                label.w3-text-blue
+                    b Departamento
+            .w3-col.s9.w3-border
+                input.w3-input.w3-border.w3-light-grey(type='text' name='department' value=utilizador.department readonly="readonly")
+            .w3-col.s3
+                label.w3-text-blue
+                    b Papel
+            .w3-col.s9.w3-border
+                input.w3-input.w3-border.w3-light-grey(type='text' name='role' value=utilizador.role readonly="readonly")
+            .w3-col.s3
+                label.w3-text-blue
+                    b Data Registo
+            .w3-col.s9.w3-border
+                input.w3-input.w3-border.w3-light-grey(type='text' name='role' value=utilizador.data_register readonly="readonly")
+            .w3-col.s3
+                label.w3-text-blue
+                    b Último Login
+            .w3-col.s9.w3-border
+                input.w3-input.w3-border.w3-light-grey(type='text' name='role' value=utilizador.data_last_login readonly="readonly")
+        </div>     
+    </div>
     if(pubs.length>0)
-        #display.w3-card-4.modal
-        .w3-container.w3-blue
-            h2.w3-center Lista de publicações
-        
-        each pub, index in pubs 
-            .card
-                .w3-row.w3-margin-bottom
-                    .w3-col.s3
-                        label.w3-text-blue
-                            b Autor
-                    .w3-col.s9.w3-border
-                        input.w3-input.w3-border.w3-light-grey(type='text' name='author' value=pub.author readonly="readonly")
-                    .w3-col.s3
-                        label.w3-text-blue
-                            b Descrição
-                    .w3-col.s9.w3-border
-                        input.w3-input.w3-border.w3-light-grey(type='text' name='description' value=pub.description readonly="readonly")
-                    .w3-col.s3
-                        label.w3-text-blue
-                            b Avaliação da Publicação
-                    .w3-col.s9.w3-border
-                        input.w3-input.w3-border.w3-light-grey(type='text' name='rating' value=pub.pub_rating readonly="readonly")
-                    .w3-col.s3
-                        label.w3-text-blue
-                            b Recursos
-                each recurso in pub.resources   
-                        .w3-col.s3
-                            label.w3-text-blue
-                                b Titulo
-                        .w3-col.s9.w3-border
-                            input.w3-input.w3-border.w3-light-grey(type='text' name='title' value=recurso.title readonly="readonly")(onclick='showImage(' + '"' + recurso.id + '"' + ','+ '"' + recurso.extension + '"' + ','+ '"' +  pub.author + '"' + ',' + '"' + recurso.title + '"' + ')')                     
-                        .w3-col.s3
-                                label.w3-text-blue
-                                    b Avaliação do Recurso
-                        .w3-col.s9.w3-border
-                            input.w3-input.w3-border.w3-light-grey(type='text' name='rating' value=recurso.rating readonly="readonly")
+        - var check = true;
+        <div class="w3-container w3-margin-top  w3-display-topmiddle" style="top:530px" >
+            .w3-container.w3-blue.w3-center
+                <h5 classe="w3-blue">Lista de publicações</h5>
+            each pub,index in pubs
+                .w3-container.w3-blue
+                    a.w3-bar-item.w3-button(href='/users/pub/'+pub.id, style="display: flex; justify-content: center") #{pub.author} -  #{pub.data_created.substr(0,16).replace("T", " ")}
+                <div class="w3-container w3-card-4" style="width:1000px">
+                    <p style="text-align: justify;text-justify: inter-word;"> #{pub.description}</p>   
+                    <p> Avaliação da publicação: #{pub.pub_rating}     </p>  
+                    <br>
+                    <label class="w3-label">Comentários</label>
+                    each comentario in pub.comments
+                        <p style="display: flex; justify-content: left"> #{comentario.author_mail} -  #{comentario.data.substr(0,16).replace("T", " ")} - #{comentario.text}</p>  
+                    <div id=#{index}>
+                    </div>
+                    <div>
+                        input.w3-input.w3-border.w3-light-grey(type='text' id="input"+index style="display: inline-block;width: 810px;")
+                        input.w3-btn.w3-left.w3-left.w3-blue-grey.w3-right(type='submit' style="display: inline-block;width: 150px;" value='Comentar')(onclick='add_comentario(' + '"' + myuser.mail + '"' + ',' + '"'+ pub.author + '"' + ',' + '"'+   pub.data_created+ '"' + ',' + '"' + index + '"' + ')')     
+                    </div>
+                </div>
                 <br>
                 <br>
-                <br>
-                .w3-col.s3
-                        label.w3-text-blue
-                            b Comentários
-                .w3-col.s9.w3-border
-                        each comentario in pub.comments
-                            input.w3-input.w3-border.w3-light-grey(type='text' value=comentario.author_mail+ ' - ' +comentario.text readonly="readonly")
-                        <div id=#{index}>
-                        </div>
-                
-                .w3-col.s9.w3-border
-                    input.w3-input.w3-border.w3-light-grey(type='text' id="input"+index)
-                    input.w3-btn.w3-left.w3-left.w3-blue-grey(type='submit' value='Comentar')(onclick='add_comentario(' + '"' + utilizador.mail + '"' + ',' + '"'+ pub.author + '"' + ',' + '"'+   pub.data_created+ '"' + ',' + '"' + index + '"' + ')')     
-    else
-        .w3-container.w3-blue
-            h2.w3-center Não tens publicações registadas 
+        </div>

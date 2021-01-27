@@ -21,7 +21,7 @@ block content
                     <br>
                     <label class="w3-label">Comentários</label>
                     each comentario in pub.comments
-                        <p style="display: flex; justify-content: left"> #{comentario.author_mail} - #{comentario.text}</p>  
+                        <p style="display: flex; justify-content: left"> #{comentario.author_mail} - #{comentario.data.substr(0,16).replace("T", " ")} - #{comentario.text}</p>  
                     <div id=#{index}>
                     </div>
                     <div>

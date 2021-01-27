@@ -10,7 +10,6 @@ module.exports.list = () => {
 }
 
 module.exports.list = (mail, role) => {
-    console.log(role)
     if (role == "administrador") {
         return Pub
             .find()
@@ -34,21 +33,28 @@ module.exports.list = (mail, role) => {
     }
 }
 
-//funçao para complementar o list dos produtores
-module.exports.list_aux = (mail) => {
-    return Pub
-        .find({ 'author': { $ne: 'author' } })
-        .where('visibility').equals('Público')
-        .sort({ author: 1 })
-        .exec()
-}
-
-
 //devolve as publicacoes de um autor
 module.exports.lookUp = author => {
     return Pub
         .find({ author: author })
         .exec()
+}
+
+module.exports.lookUp = (mail, role) => {
+    if (role == "administrador") {
+        return Pub
+            .find({author:mail})
+            .sort({ author: 1 })
+            .exec()
+    }
+    else{
+        return Pub
+            .find()
+            .where('visibility').equals('Público')
+            .where('author').equals(mail)
+            .sort({ author: 1 })
+            .exec()
+    }
 }
 
 

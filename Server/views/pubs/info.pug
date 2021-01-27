@@ -4,52 +4,48 @@ block content
     <div class="w3-bar w3-blue w3-large">
         <a href="/users/news" class="w3-bar-item w3-button ">Notícias</a> 
         <a href="/mural" class="w3-bar-item w3-button ">Mural</a> 
-        <a href="javascript:history.back()" class="w3-bar-item w3-button ">Página Anterior</a>
+        <a href="/users/perfil" class="w3-bar-item w3-button">Perfil</a>
         <a href="/users/logout" class="w3-bar-item w3-button" style="float: right";>Logout</a>
-        <a href="/users/perfil" class="w3-bar-item w3-button" style="float: right";>Perfil</a>
+        <a href="javascript:history.back()" class="w3-bar-item w3-button" style="float: right">Página Anterior</a>
     </div>
 
     <br>
     <br>
     
     #display.w3-card-4.modal
-    - var check = true;
     <div class="w3-container w3-margin-top  w3-display-topmiddle" style="top:80px" >
         .w3-container.w3-blue
             a.w3-bar-item.w3-button(href='/users/perfis/'+pub.author, style="display: flex; justify-content: center") #{pub.author} -  #{pub.data_created.substr(0,16).replace("T", " ")}
         <div class="w3-container w3-card-4" style="width:1000px">
         <p style="text-align: justify;text-justify: inter-word;"> #{pub.description}</p>   
-        <p> Avaliação da publicação: #{pub.pub_rating}</p>  
-        <br>
+        <p> Avaliação da publicação: #{pub.pub_rating}</p> 
+        <div> 
         <label class="w3-label">Recursos</label>
-        <br> 
-        each recurso in pub.resources  
-            <div>
-                <div>
-                    <p style="float: left"> Titulo: #{recurso.title}</p>  
-                    img(src='/download_icon.png' style="width:30px;height:30px;float: left")(onclick='showFile(' + '"' + recurso.id + '"' + ','+ '"' + recurso.extension + '"' + ','+ '"' +  pub.author + '"' + ',' + '"' + recurso.title + '"' + ')')                     
-                </div>
-                <br>
-                <p> Avaliação do recurso: #{recurso.rating}</p>  
-                each rating in recurso.rating_list
-                    if check && (rating.rating_mail == utilizador.mail)
-                        - check=false
+        <div>
+            each recurso in pub.resources 
+                - var check = true;
+                <p style="display: inline-block"> Titulo: #{recurso.title}</p>  
+                img(src='/download_icon.png' style="display: inline-block;width:30px;height:30px")(onclick='showFile(' + '"' + recurso.id + '"' + ','+ '"' + recurso.extension + '"' + ','+ '"' +  pub.author + '"' + ',' + '"' + recurso.title + '"' + ')')       
+                <div>               
+                    <p> Avaliação do recurso: #{recurso.rating}</p>  
+                    each rating in recurso.rating_list
+                        if rating.rating_mail == utilizador.mail
+                            - check=false
+                            <div>
+                                <p style="display: inline-block"> Minha avaliação do recurso</p>  
+                                input.w3-input.w3-border.w3-light-grey(type='text' name='rating' style="display: inline-block;width: 150px;" value=rating.value readonly="readonly")(onclick='giveRating(' + '"' + pub.id + '"' + ','+ '"' +  recurso.id + '"' + ')')
+                            </div>
+                    if check
                         <div>
-                            <p> Minha avaliação do recurso</p>  
-                            .w3-col.s9.w3-border
-                                input.w3-input.w3-border.w3-light-grey(type='text' name='rating' value=rating.value readonly="readonly")(onclick='giveRating(' + '"' + pub.id + '"' + ','+ '"' +  recurso.id + '"' + ')')
+                            <p style="display: inline-block"> Minha avaliação do recurso</p>  
+                            input.w3-input.w3-border.w3-light-grey(type='text' name='rating' style="display: inline-block;width: 150px;" readonly="readonly")(onclick='giveRating(' + '"' + pub.id + '"' + ','+ '"' +  recurso.id + '"' + ')')
                         </div>
-                if check
-                    .w3-col.s3
-                        label.w3-text-blue
-                            b Minha Avaliação do Recurso
-                    .w3-col.s9.w3-border
-                        input.w3-input.w3-border.w3-light-grey(type='text' name='rating'  readonly="readonly")(onclick='giveRating(' + '"' + pub.id + '"' + ','+ '"' +  recurso.id + '"' + ')')
-                <br>
-            </div>
+                    <br>
+                </div>
+        </div>
         <p>Comentários</p>
         each comentario in pub.comments
-            <p style="display: flex; justify-content: left"> #{pub.author} -  #{pub.data_created.substr(0,16).replace("T", " ")} - #{comentario.text}</p>  
+            <p style="display: flex; justify-content: left"> #{comentario.author_mail} -  #{comentario.data.substr(0,16).replace("T", " ")} - #{comentario.text}</p>  
         <div id=0>
         </div>
         <div>
