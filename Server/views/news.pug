@@ -12,6 +12,10 @@ block content
         #display.w3-card-4.modal
         - var check = true;
         <div class="w3-container w3-margin-top  w3-display-topmiddle" style="top:80px" >
+            .w3-container.w3-blue
+                h2.w3-center Publicações criadas desde o teu último login
+            br
+            br
             each pub,index in pubs
                 .w3-container.w3-blue
                         a.w3-bar-item.w3-button(href='/users/pub/'+pub.id, style="display: flex; justify-content: center") #{pub.author} -  #{pub.data_created.substr(0,16).replace("T", " ")}
@@ -36,4 +40,4 @@ block content
         br
         br
         .w3-container.w3-blue
-            h2.w3-center Não tens publicações registadas 
+            h2.w3-center Não foram criadas publicações desde o teu último login

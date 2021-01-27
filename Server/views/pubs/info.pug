@@ -17,7 +17,10 @@ block content
     #display.w3-card-4.modal
     <div class="w3-container w3-margin-top  w3-display-topmiddle" style="top:80px" >
         .w3-container.w3-blue
-            a.w3-bar-item.w3-button(href='/users/perfis/'+pub.author, style="display: flex; justify-content: center") #{pub.author} -  #{pub.data_created.substr(0,16).replace("T", " ")}
+            if(utilizador.mail==pub.author)
+                a.w3-bar-item.w3-button(href='/users/perfil', style="display: flex; justify-content: center") #{pub.author} -  #{pub.data_created.substr(0,16).replace("T", " ")}
+            else    
+                a.w3-bar-item.w3-button(href='/users/perfis/'+pub.author, style="display: flex; justify-content: center") #{pub.author} -  #{pub.data_created.substr(0,16).replace("T", " ")}
         <div class="w3-container w3-card-4" style="width:1000px">
         <p style="text-align: justify;text-justify: inter-word;"> #{pub.description}</p>   
         <p> Avaliação da publicação: #{pub.pub_rating}</p> 

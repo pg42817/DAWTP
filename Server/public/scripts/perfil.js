@@ -29,7 +29,7 @@ function aceitar_pedido(mail)
     if(totalRowCount==1)
     {
         table.remove()
-        header.innerHTML="Não existem pediddos para produtores"
+        header.innerHTML="Não existem pedidos para produtores"
     }
 }
 
@@ -49,7 +49,7 @@ function recusar_pedido(mail)
     if(totalRowCount==1)
     {
         table.remove()
-        header.innerHTML="Não existem pediddos para produtores"
+        header.innerHTML="Não existem pedidos para produtores"
     }
 
 }

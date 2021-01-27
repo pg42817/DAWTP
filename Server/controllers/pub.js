@@ -2,12 +2,6 @@ const pub = require('../models/pub')
 var Pub = require('../models/pub')
 var mongoose = require('mongoose')
 
-module.exports.list = () => {
-    return Pub
-        .find()
-        .sort({ author: 1 })
-        .exec()
-}
 
 module.exports.list = (mail, role) => {
     if (role == "administrador") {
@@ -33,8 +27,17 @@ module.exports.list = (mail, role) => {
     }
 }
 
+//funçao para complementar o list dos produtores
+module.exports.list_aux = (mail) => {
+    return Pub
+    .find( { 'author': { $ne: 'author' } } )
+    .where('visibility').equals('Público')
+    .sort({author:1})
+    .exec()
+}
+
 //devolve as publicacoes de um autor
-module.exports.lookUp = author => {
+module.exports.my_lookUp = (author) => {
     return Pub
         .find({ author: author })
         .exec()

@@ -6,7 +6,7 @@ var fs = require('fs')
 var path = require('path')
 var passport = require('passport')
 var multer = require('multer');
-const pub = require('../models/pub');
+
 var archiver = require('archiver')
 var fse = require('fs-extra')
 var mime = require('mime-types')
@@ -120,7 +120,7 @@ router.get('/logout', function (req, res) {
 
 //#region pubs
 
-router.get('/pubs/download/:fname/:autor', (req, res) => {
+router.get('/pubs/download/:fname/:autor',verificaAutenticacao, (req, res) => {
   if (req.isAuthenticated() && (req.user.role == "consumidor" || req.user.role == "produtor" || req.user.role == "administrador")) {
     let filePath = path.join(__dirname, '../public/fileStore/', req.params.autor, '/')
     let zipPath = path.join(__dirname, '../public/fileStore/zip')
@@ -166,7 +166,7 @@ router.get('/pubs/download/:fname/:autor', (req, res) => {
   }
 });
 
-router.post('/pubs/rating/:pubid/:resourceid', function (req, res) {
+router.post('/pubs/rating/:pubid/:resourceid',verificaAutenticacao, function (req, res) {
   Pub.handleRating(req.params.pubid, req.params.resourceid, req.user.mail, function (err, obj) {
     if (err) {
       throw err;
@@ -191,7 +191,6 @@ router.post('/pubs/rating/:pubid/:resourceid', function (req, res) {
                           .then(() =>{
                             Pub.find_pub_by_id(req.params.pubid)
                               .then(publicacao => {
-                                console.log(publicacao)
                                 res.render('pubs/info', { pub:publicacao,utilizador: req.user });
                             })
                             .catch(erro => done(erro))
@@ -224,7 +223,6 @@ router.post('/pubs/rating/:pubid/:resourceid', function (req, res) {
                         .then(() =>{
                             Pub.find_pub_by_id(req.params.pubid)
                             .then(publicacao => {
-                              console.log(publicacao)
                               res.render('pubs/info', { pub:publicacao,utilizador: req.user });
                           })
                           .catch(erro => done(erro))
@@ -243,7 +241,7 @@ router.post('/pubs/rating/:pubid/:resourceid', function (req, res) {
   })
 });
 
-router.get('/pubs/upload', function (req, res) {
+router.get('/pubs/upload', verificaAutenticacao,function (req, res) {
   if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
     var d = new Date().toISOString().substr(0, 16)
     res.render('pubs/form', { utilizador: req.user, d });
@@ -253,7 +251,7 @@ router.get('/pubs/upload', function (req, res) {
   }
 });
 
-router.get('/pubs/edit/:pubid', function (req, res) {
+router.get('/pubs/edit/:pubid',verificaAutenticacao, function (req, res) {
   if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
     Pub.find_pub_by_id(req.params.pubid)
       .then(publicacao => {
@@ -266,7 +264,7 @@ router.get('/pubs/edit/:pubid', function (req, res) {
   }
 });
 
-router.post('/pubs/edit/:pubid', upload.array('myFile'), function (req, res) {
+router.post('/pubs/edit/:pubid', upload.array('myFile'),verificaAutenticacao, function (req, res) {
   if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
 
     Pub.find_pub_by_id(req.params.pubid)
@@ -296,7 +294,7 @@ router.post('/pubs/edit/:pubid', upload.array('myFile'), function (req, res) {
   }
 });
 
-router.post('/pubs', upload.array('myFile'), function (req, res) {
+router.post('/pubs', upload.array('myFile'), verificaAutenticacao,function (req, res) {
   if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
     var i;
     var recursos = []
@@ -365,7 +363,7 @@ router.post('/pubs', upload.array('myFile'), function (req, res) {
 
 });
 
-router.get('/pubs/delete/:pubid', function (req, res) {
+router.get('/pubs/delete/:pubid',verificaAutenticacao, function (req, res) {
   let fileStorePath = path.join(__dirname, '../public/fileStore/')
   Pub.find_pub_by_id(req.params.pubid)
     .then(publicacao => {
@@ -386,7 +384,7 @@ router.get('/pubs/delete/:pubid', function (req, res) {
     .catch(erro => done(erro))
 });
 
-router.get('/pub/:pubid', function (req, res) {
+router.get('/pub/:pubid',verificaAutenticacao, function (req, res) {
   Pub.find_pub_by_id(req.params.pubid)
     .then(publicacao => {
       res.render('pubs/info', { pub:publicacao,utilizador: req.user });
@@ -398,12 +396,11 @@ router.get('/pub/:pubid', function (req, res) {
 
 //#region perfis
 //apresenta os dados do utilizador e as suas publicações
-router.get('/perfil', function (req, res) {
+router.get('/perfil',verificaAutenticacao, function (req, res) {
   mail = req.user.mail
   User.lookUp(mail)
     .then(utilizador => {
-      console.log("tem pedido?:" + utilizador.pedido_produtor)
-      Pub.lookUp(mail)
+      Pub.my_lookUp(mail)
         .then(publicacoes => {
           res.render('perfil', { utilizador: utilizador, pubs: publicacoes });
         })
@@ -413,7 +410,7 @@ router.get('/perfil', function (req, res) {
 
 });
 
-router.get('/perfis/:mail', function (req, res) {
+router.get('/perfis/:mail',verificaAutenticacao, function (req, res) {
   let perfil = req.params.mail;
   let p_user = req.user.mail;
   let role = req.user.role;
@@ -421,7 +418,6 @@ router.get('/perfis/:mail', function (req, res) {
 
   //verificar se o perfil do dono da publicaçao é o proprio
   if (p_user == perfil) {
-    console.log("aaaaaaa")
     User.lookUp(p_user)
       .then(utilizador => {
         Pub.lookUp(p_user)
@@ -435,10 +431,8 @@ router.get('/perfis/:mail', function (req, res) {
   else {
     User.lookUp(perfil)
       .then(utilizador => {
-        console.log(utilizador)
         Pub.lookUp(perfil,role)
           .then(publicacoes => {
-            console.log("aquiAQUI")
             res.render('perfis', { utilizador: utilizador, pubs: publicacoes, myuser:req.user });
           })
           .catch(erro => done(erro))
@@ -449,7 +443,7 @@ router.get('/perfis/:mail', function (req, res) {
 
 });
 
-router.get('/perfil/delete/:pubid', function (req, res) {
+router.get('/perfil/delete/:pubid',verificaAutenticacao, function (req, res) {
   let fileStorePath = path.join(__dirname, '../public/fileStore/')
   Pub.find_pub_by_id(req.params.pubid)
     .then(publicacao => {
@@ -474,7 +468,7 @@ router.get('/perfil/delete/:pubid', function (req, res) {
 
 //#region pedido produtor
 
-router.get('/pedidos/', function (req, res) {
+router.get('/pedidos/', verificaAutenticacao,function (req, res) {
   //se for admin envia a lista de pedidos
   User.list_pedidos_produtor()
     .then(pedidos => {
@@ -483,7 +477,7 @@ router.get('/pedidos/', function (req, res) {
     .catch(erro => done(erro))
 });
 
-router.post('/pedido-produtor/', function (req, res) {
+router.post('/pedido-produtor/',verificaAutenticacao, function (req, res) {
   mail = req.user.mail
   User.update_pedir_produtor(mail, "sim")
     .then(utilizador => {
@@ -493,8 +487,7 @@ router.post('/pedido-produtor/', function (req, res) {
 });
 
 //aceitar pedido
-router.post('/aceitar-pedido/:mail', function (req, res) {
-  console.log("APROVAR")
+router.post('/aceitar-pedido/:mail',verificaAutenticacao, function (req, res) {
   mail = req.params.mail
   User.update_pedir_produtor(mail, "nao")
     .then(utilizador => {
@@ -508,9 +501,8 @@ router.post('/aceitar-pedido/:mail', function (req, res) {
 });
 
 //recusar pedido
-router.post('/recusar-pedido/:mail', function (req, res) {
+router.post('/recusar-pedido/:mail',verificaAutenticacao, function (req, res) {
   mail = req.params.mail
-  console.log("RECUSAR")
   User.update_pedir_produtor(mail, "nao")
     .then(utilizador => {
       res.end()
@@ -520,13 +512,12 @@ router.post('/recusar-pedido/:mail', function (req, res) {
 
 //#endregion
 
-router.post('/adicionar_comentario', function (req, res) {
+router.post('/adicionar_comentario',verificaAutenticacao, function (req, res) {
   var d = new Date().toISOString().substr(0, 16)
 
   pub_date = req.body.data
   text = req.body.text
   author = req.body.author
-  console.log("AUTOR" +author)
   pub_author = req.body.pub_author
 
   Pub.find_pub(pub_date, pub_author)
@@ -537,7 +528,6 @@ router.post('/adicionar_comentario', function (req, res) {
         "data": d
       }
       dados.comments.push(comentario)
-      console.log(comentario)
       Pub.update(dados)
         .then(dados => {
         })
@@ -548,7 +538,8 @@ router.post('/adicionar_comentario', function (req, res) {
 });
 
 //#region news
-router.get('/news', function (req, res) {
+router.get('/news',verificaAutenticacao, function (req, res) {
+  console.log(req.user)
   var d = new Date().toISOString().substr(0, 16)
   mail = req.user.mail
   role = req.user.role
@@ -559,34 +550,42 @@ router.get('/news', function (req, res) {
       if (role == "produtor") {
         Pub.list_aux(mail)
           .then(publicacoes => {
-            var p = []
+            var p = [] 
             publicacoes.forEach(element => {
               p.push(element)
             });
             pubs.forEach(element => {
               p.push(element)
             });
-            var news = get_news(p)
-            console.log(news)
+            last_login=req.user.data_last_login
+            var news = get_news(pubs,last_login)
             res.render('news', { utilizador: req.user, pubs: news, d });
           })
       }
       else {
-        var news = get_news(pubs)
-        console.log(news)
+        last_login=req.user.data_last_login
+        var news = get_news(pubs,last_login)
         res.render('news', { utilizador: req.user, pubs: news, d });
       }
     })
     .catch(erro => done(erro))
 });
 
-function get_news(publicacoes) {
+function get_news(publicacoes,last_login) {
   var news = []
-  var date_agora = Date.parse(new Date())
+
+  console.log(last_login)
+  var last_login=new Date(last_login.substring(6, 10),last_login.substring(3, 5), last_login.substring(0,2), last_login.substring(12, 14), last_login.substring(15, 17),last_login.substring(18, 20));
+  last_login.setMonth(last_login.getMonth()-1)
+  last_login=Date.parse(last_login)
   publicacoes.forEach(pub => {
+    var data=new Date(pub.data_created.substring(0,4),pub.data_created.substring(5,7), pub.data_created.substring(8,10),pub.data_created.substring(11,13), pub.data_created.substring(14,16),pub.data_created.substring(17,19));
+    data.setMonth(data.getMonth()-1)
+    data=Date.parse(data)
+
     var data = Date.parse(pub.data_created)
-    const diffTime = Math.abs(date_agora - data);
-    if (diffTime < 86400000) {
+    var diffTime = data- last_login
+    if (diffTime >0) {
       news.push(pub)
     }
   })
@@ -594,5 +593,16 @@ function get_news(publicacoes) {
 }
 
 //#endregion
+
+function verificaAutenticacao(req,res,next)
+{
+  console.log('User (verif.: )' + JSON.stringify(req.user))
+  if(req.isAuthenticated()){
+    next();
+  }
+  else{
+    res.redirect("/users/login");
+  }
+}
 
 module.exports = router;
