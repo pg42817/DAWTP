@@ -1,5 +1,5 @@
 function showFile(id,extensao,autor,name) {
-    console.log(name + '.' + extensao)
+    alert(name + '.' + extensao)
     switch(extensao){
         case 'png':
             var ficheiro = '<img src="/fileStore/'+autor + '/' + id+ '.'+ extensao +  '"style="max-width:100%; height=auto;/>'

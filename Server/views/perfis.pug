@@ -5,6 +5,8 @@ block content
         <div class="w3-bar w3-blue w3-large">
         <a href="/users/news" class="w3-bar-item w3-button ">Notícias</a> 
         <a href="/mural" class="w3-bar-item w3-button ">Mural</a> 
+        if utilizador.role=="consumidor" && utilizador.pedido_produtor=="nao"   
+            a#botao-pedido.w3-bar-item.w3-button()(onclick='pedir_produtor(' + '"botao-pedido' + '"' + ')') Tornar-me produtor
         <a href="/users/logout" class="w3-bar-item w3-button" style="float: right";>Logout</a>
         <a href="javascript:history.back()" class="w3-bar-item w3-button" style="float: right">Página Anterior</a>
     </div>

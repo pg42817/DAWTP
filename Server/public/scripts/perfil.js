@@ -18,13 +18,19 @@ function aceitar_pedido(mail)
     var myobj = document.getElementById(mail)
     myobj.remove()
 
+    var header= document.getElementById("header")
+    myobj.remove()
+
     $.post('/users/aceitar-pedido/' + mail);
     alert("Aprovado com sucesso");
-
-    User.list_pedidos_produtor()
-            .then(pedidos => {
-            })
-            .catch(erro => done(erro))
+    
+    var table = document.getElementById("tabela_pedidos");
+    var totalRowCount = table.rows.length; 
+    if(totalRowCount==1)
+    {
+        table.remove()
+        header.innerHTML="Não existem pediddos para produtores"
+    }
 }
 
 //Recusa o pedido para produtor e elimina a linha da tabela do DOM
@@ -32,12 +38,19 @@ function recusar_pedido(mail)
 {   
     var myobj = document.getElementById(mail)
     myobj.remove()
+
+    var header= document.getElementById("header")
+    myobj.remove()
     $.post('/users/recusar-pedido/' + mail);
     alert("Recusado com sucesso");
 
-    User.list_pedidos_produtor()
-    .then(pedidos => {
-    })
-    .catch(erro => done(erro))
+    var table = document.getElementById("tabela_pedidos");
+    var totalRowCount = table.rows.length; 
+    if(totalRowCount==1)
+    {
+        table.remove()
+        header.innerHTML="Não existem pediddos para produtores"
+    }
+
 }
 
