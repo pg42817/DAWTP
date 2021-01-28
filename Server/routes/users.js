@@ -6,6 +6,7 @@ var fs = require('fs')
 var path = require('path')
 var passport = require('passport')
 var multer = require('multer');
+var templates = require('../templates/infor')
 
 var archiver = require('archiver')
 var fse = require('fs-extra')
@@ -387,7 +388,12 @@ router.get('/pubs/delete/:pubid',verificaAutenticacao, function (req, res) {
 router.get('/pub/:pubid',verificaAutenticacao, function (req, res) {
   Pub.find_pub_by_id(req.params.pubid)
     .then(publicacao => {
-      res.render('pubs/info', { pub:publicacao,utilizador: req.user });
+      console.log(publicacao)
+      //usar template para o html em vez de pug
+      //res.render('pubs/info', { pub:publicacao,utilizador: req.user });
+      res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
+      res.write(templates.infor(publicacao,req.user))
+      res.end()
     })
     .catch(erro => done(erro))
 });
