@@ -30,11 +30,100 @@ module.exports.list = (mail, role) => {
 //funçao para complementar o list dos produtores
 module.exports.list_aux = (mail) => {
     return Pub
-    .find( { 'author': { $ne: 'author' } } )
-    .where('visibility').equals('Público')
-    .sort({author:1})
-    .exec()
+        .find({ 'author': { $ne: 'author' } })
+        .where('visibility').equals('Público')
+        .sort({ author: 1 })
+        .exec()
 }
+
+module.exports.list_by_title = (mail, role, recnome) => {
+    if (role == "administrador") {
+        return Pub
+            .find({ "resources": { "$elemMatch": { "title": recnome } } })
+            .sort({ author: 1 })
+            .exec()
+    }
+    if (role == "produtor") {
+        return Pub
+            .find({ "author": mail, "visibility": "Privado", "resources": { "$elemMatch": { "title": recnome } } })
+            .sort({ author: 1 })
+            .exec()
+    }
+    if (role == "consumidor") {
+        return Pub
+            .find({ "visibility": "Público", "resources": { "$elemMatch": { "title": recnome } } })
+            .sort({ author: 1 })
+            .exec()
+    }
+}
+
+//funçao para complementar o list dos produtores
+module.exports.list_aux_by_title = (mail, recnome) => {
+    return Pub
+        .find({ 'author': { $ne: 'author' }, "visibility": "Público", "resources": { "$elemMatch": { "title": recnome } } })
+        .sort({ author: 1 })
+        .exec()
+}
+
+module.exports.list_by_date = (mail, role, date) => {
+    if (role == "administrador") {
+        return Pub
+            .find({ "data_created": { "$regex": "^" + date + ".*" } })
+            .sort({ author: 1 })
+            .exec()
+    }
+    if (role == "produtor") {
+        return Pub
+            .find({ "author": mail, "visibility": "Privado", "data_created": { "$regex": "^" + date + ".*" } })
+            .sort({ author: 1 })
+            .exec()
+    }
+    if (role == "consumidor") {
+        return Pub
+            .find({ "visibility": "Público", "data_created": { "$regex": "^" + date + ".*" } })
+            .sort({ author: 1 })
+            .exec()
+    }
+}
+
+//funçao para complementar o list dos produtores
+module.exports.list_aux_by_date = (mail, date) => {
+    return Pub
+        .find({ 'author': { $ne: 'author' }, "visibility": "Público", "data_created": { "$regex": "^" + date + ".*" } })
+        .sort({ author: 1 })
+        .exec()
+}
+
+
+module.exports.list_by_date_and_title = (mail, role, date, recnome) => {
+    if (role == "administrador") {
+        return Pub
+            .find({ "data_created": { "$regex": "^" + date + ".*" }, "resources": { "$elemMatch": { "title": recnome } } })
+            .sort({ author: 1 })
+            .exec()
+    }
+    if (role == "produtor") {
+        return Pub
+            .find({ "author": mail, "visibility": "Privado", "data_created": { "$regex": "^" + date + ".*" }, "resources": { "$elemMatch": { "title": recnome } } })
+            .sort({ author: 1 })
+            .exec()
+    }
+    if (role == "consumidor") {
+        return Pub
+            .find({ "visibility": "Público", "data_created": { "$regex": "^" + date + ".*" }, "resources": { "$elemMatch": { "title": recnome } } })
+            .sort({ author: 1 })
+            .exec()
+    }
+}
+
+//funçao para complementar o list dos produtores
+module.exports.list_aux_by_date_and_title = (mail, date, recnome) => {
+    return Pub
+        .find({ 'author': { $ne: 'author' }, "visibility": "Público", "data_created": { "$regex": "^" + date + ".*" }, "resources": { "$elemMatch": { "title": recnome } } })
+        .sort({ author: 1 })
+        .exec()
+}
+
 
 //devolve as publicacoes de um autor
 module.exports.my_lookUp = (author) => {
@@ -46,11 +135,11 @@ module.exports.my_lookUp = (author) => {
 module.exports.lookUp = (mail, role) => {
     if (role == "administrador") {
         return Pub
-            .find({author:mail})
+            .find({ author: mail })
             .sort({ author: 1 })
             .exec()
     }
-    else{
+    else {
         return Pub
             .find()
             .where('visibility').equals('Público')
