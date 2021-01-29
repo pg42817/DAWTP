@@ -7,10 +7,21 @@ block content
         <a href="/users/perfil" class="w3-bar-item w3-button" style="float: right";>Perfil</a>
     </div>
 
-    
+    <form class="w3-container w3-margin-top" action="/mural" method='GET' id="filter_form">
+        .searchbar
+            input(type="text" defaultValue="" placeholder="Pesquisar título.." name="recnome")
+            <button type="submit"><i class="fa fa-search"></i></button>
+        .w3-row.w3-margin-bottom
+            select.w3-select.w3-border(name="data")
+                <option value="">Escolha o ano</option>
+                <option value="2021">2021</option>
+                <option value="2">Option 2</option>
+                <option value="3">Option 3</option>
+    </form>
+
     if(pubs.length>0)
         - var check = true;
-        <div class="w3-container w3-margin-top  w3-display-topmiddle" style="top:80px" >
+        <div class="w3-container w3-margin-top  w3-display-topmiddle" style="top:150px" >
             each pub,index in pubs
                 .w3-container.w3-blue
                     a.w3-bar-item.w3-button(href='users/pub/'+pub.id, style="display: flex; justify-content: center") #{pub.author} -  #{pub.data_created.substr(0,16).replace("T", " ")}
