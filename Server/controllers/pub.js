@@ -52,9 +52,9 @@ module.exports.listOrder = (mail, role,sort, order) => {
 }
 
 //funçao para complementar o list dos produtores
-module.exports.list_aux = (mail) => {
+module.exports.list_aux = () => {
     return Pub
-        .find({ 'author': { $ne: 'author' } })
+        .find()
         .where('visibility').equals('Público')
         .sort({ author: 1 })
         .exec()

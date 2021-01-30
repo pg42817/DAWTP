@@ -554,7 +554,7 @@ router.get('/news',verificaAutenticacao, function (req, res) {
     .then(pubs => {
       //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
       if (role == "produtor") {
-        Pub.list_aux(mail)
+        Pub.list_aux()
           .then(publicacoes => {
             var p = [] 
             publicacoes.forEach(element => {
