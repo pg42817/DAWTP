@@ -10,15 +10,26 @@ block content
     <form class="w3-container w3-margin-top" action="/mural" method='GET' id="filter_form">
         .searchbar
             input(type="text" defaultValue="" placeholder="Pesquisar título.." name="recnome")
-            <button type="submit"><i class="fa fa-search"></i></button>
-        .w3-row.w3-margin-bottom
-            select.w3-select.w3-border(name="data")
+            select.w3-select.w3-border(name="data" style="width: 6%;")
                 <option value="">Escolha o ano</option>
                 <option value="2021">2021</option>
-                <option value="2">Option 2</option>
-                <option value="3">Option 3</option>
+                <option value="2020">2020</option>
+            p
+            <button type="submit" style="width: 5%;margin-right:5px;" ><i class="fa fa-search"></i></button>​
+            <select onchange="location = this.options[this.selectedIndex].value;">
+                <option value="">Ordenar Por</option>
+                <option value="mural?orderby=author&order=1">Autor: A-Z</option>
+                <option value="mural?orderby=author&order=2">Autor: Z-A</option>
+                <option value="mural?orderby=description&order=1">Descrição: A-Z</option>
+                <option value="mural?orderby=description&order=2">Descrição: Z-A</option>
+                <option value="mural?orderby=data_created&order=2">Data: Mais Recente</option>
+                <option value="mural?orderby=data_created&order=1">Data: Mais Antigo</option>
+                <option value="mural?orderby=pub_rating&order=2">Rating: Maior</option>
+                <option value="mural?orderby=pub_rating&order=1">Rating: Menor</option>
+            </select>
+        .w3-row.w3-margin-bottom       
     </form>
-
+           
     if(pubs.length>0)
         - var check = true;
         <div class="w3-container w3-margin-top  w3-display-topmiddle" style="top:150px" >

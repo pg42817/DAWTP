@@ -27,6 +27,30 @@ module.exports.list = (mail, role) => {
     }
 }
 
+module.exports.listOrder = (mail, role,sort, order) => {
+    if (role == "administrador") {
+        return Pub
+            .find()
+            .sort({ [sort]: order })
+            .exec()
+    }
+    if (role == "produtor") {
+        return Pub
+            .find()
+            .where('visibility').equals('Privado')
+            .where('author').equals(mail)
+            .sort({ [sort]: order })
+            .exec()
+    }
+    if (role == "consumidor") {
+        return Pub
+            .find()
+            .where('visibility').equals('Público')
+            .sort({ [sort]: order })
+            .exec()
+    }
+}
+
 //funçao para complementar o list dos produtores
 module.exports.list_aux = (mail) => {
     return Pub

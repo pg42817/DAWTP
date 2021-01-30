@@ -54,6 +54,33 @@ router.get('/mural', verificaAutenticacao, function (req, res) {
               pubs.forEach(element => {
                 p.push(element)
               });
+              res.render('mural', { utilizador: req.user, pubs: p, d,autor:0});
+            })
+        }
+        else {
+          res.render('mural', { utilizador: req.user, pubs, d ,autor:0  });
+        }
+      })
+      .catch(erro => done(erro))
+  }
+  else if (req.query.orderby && req.query.order) {
+    if(req.query.order==2)
+    {
+      var order=-1
+    }
+    Pub.listOrder(mail, role,req.query.orderby,order)
+      .then(pubs => {
+        //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
+        if (role == "produtor") {
+          Pub.list_aux(mail)
+            .then(publicacoes => {
+              var p = []
+              publicacoes.forEach(element => {
+                p.push(element)
+              });
+              pubs.forEach(element => {
+                p.push(element)
+              });
               res.render('mural', { utilizador: req.user, pubs: p, d });
             })
         }

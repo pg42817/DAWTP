@@ -89,10 +89,9 @@ router.get('/login', function (req, res) {
 });
 
 router.post('/login', passport.authenticate('local',{
-  failureRedirect: '/users/login',
-  failureFlash : true
-}), function (req, res) {
-  console.log("\n\nOK\n\n")
+    failureRedirect: '/users/login',
+    failureFlash : true
+  }), function (req, res) {
   //alterar a data do last_login
   req.user.data_last_login = new Date().toLocaleDateString('pt-PT', { hour: '2-digit',minute:'2-digit', second:'2-digit', hour12: false })
   User.update_last_login(req.user)
@@ -103,6 +102,7 @@ router.post('/login', passport.authenticate('local',{
   console.log('Na cb do POST login...')
   console.log('Do form: ' + JSON.stringify(req.body))
   console.log('Do passport: ' + JSON.stringify(req.user))
+  console.log('\n\nAQUI 3\n\n')
   res.redirect('/mural')
 })
 
