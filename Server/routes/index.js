@@ -72,7 +72,7 @@ router.get('/mural', verificaAutenticacao, function (req, res) {
       .then(pubs => {
         //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
         if (role == "produtor") {
-          Pub.list_aux()
+          Pub.list_aux(req.query.orderby,order)
             .then(publicacoes => {
               var p = []
               publicacoes.forEach(element => {

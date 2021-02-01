@@ -52,11 +52,11 @@ module.exports.listOrder = (mail, role,sort, order) => {
 }
 
 //funçao para complementar o list dos produtores
-module.exports.list_aux = () => {
+module.exports.list_aux = (sort, order) => {
     return Pub
         .find()
         .where('visibility').equals('Público')
-        .sort({ author: 1 })
+        .sort({ [sort]: order})
         .exec()
 }
 
@@ -153,6 +153,7 @@ module.exports.list_aux_by_date_and_title = (mail, date, recnome) => {
 module.exports.my_lookUp = (author) => {
     return Pub
         .find({ author: author })
+        .sort({data_created:-1})
         .exec()
 }
 

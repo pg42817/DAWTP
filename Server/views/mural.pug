@@ -2,7 +2,9 @@ extends layout
 
 block content
     <div class="w3-bar w3-blue w3-large">
-        <a href="/users/news" class="w3-bar-item w3-button ">Notícias</a> 
+        <a href="/users/news" class="w3-bar-item w3-button ">Notícias</a>
+        if utilizador.role=="administrador" || utilizador.role=="produtor"
+            <a href="/users/pubs/upload" class="w3-bar-item w3-button ">Criar publicação</a>  
         <a href="/users/logout" class="w3-bar-item w3-button" style="float: right";>Logout</a>
         <a href="/users/perfil" class="w3-bar-item w3-button" style="float: right";>Perfil</a>
     </div>
