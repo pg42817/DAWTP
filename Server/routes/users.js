@@ -8,6 +8,7 @@ var passport = require('passport')
 var multer = require('multer');
 var templates = require('../templates/infor')
 
+var AdmZip = require('adm-zip');
 var archiver = require('archiver')
 var fse = require('fs-extra')
 var mime = require('mime-types')
@@ -85,15 +86,15 @@ router.post('/validateEmail/', function (req, res) {
 router.get('/login', function (req, res) {
   console.log('Na cb do GET login...')
   console.log(req.sessionID)
-  res.render('login',{message: req.flash('loginMessage')})
+  res.render('login', { message: req.flash('loginMessage') })
 });
 
-router.post('/login', passport.authenticate('local',{
-    failureRedirect: '/users/login',
-    failureFlash : true
-  }), function (req, res) {
+router.post('/login', passport.authenticate('local', {
+  failureRedirect: '/users/login',
+  failureFlash: true
+}), function (req, res) {
   //alterar a data do last_login
-  req.user.data_last_login = new Date().toLocaleDateString('pt-PT', { hour: '2-digit',minute:'2-digit', second:'2-digit', hour12: false })
+  req.user.data_last_login = new Date().toLocaleDateString('pt-PT', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
   User.update_last_login(req.user)
     .then(dados => {
     })
@@ -121,7 +122,7 @@ router.get('/logout', function (req, res) {
 
 //#region pubs
 
-router.get('/pubs/download/:fname/:autor',verificaAutenticacao, (req, res) => {
+router.get('/pubs/download/:fname/:autor', verificaAutenticacao, (req, res) => {
   if (req.isAuthenticated() && (req.user.role == "consumidor" || req.user.role == "produtor" || req.user.role == "administrador")) {
     let filePath = path.join(__dirname, '../public/fileStore/', req.params.autor, '/')
     let zipPath = path.join(__dirname, '../public/fileStore/zip')
@@ -167,7 +168,7 @@ router.get('/pubs/download/:fname/:autor',verificaAutenticacao, (req, res) => {
   }
 });
 
-router.post('/pubs/rating/:pubid/:resourceid',verificaAutenticacao, function (req, res) {
+router.post('/pubs/rating/:pubid/:resourceid', verificaAutenticacao, function (req, res) {
   Pub.handleRating(req.params.pubid, req.params.resourceid, req.user.mail, function (err, obj) {
     if (err) {
       throw err;
@@ -189,12 +190,12 @@ router.post('/pubs/rating/:pubid/:resourceid',verificaAutenticacao, function (re
                       } else {
                         var avg_pub_rating = (result[0]['sumRatings']) / (result[0]['numRatings'])
                         Pub.updatePubRating(req.params.pubid, avg_pub_rating)
-                          .then(() =>{
+                          .then(() => {
                             Pub.find_pub_by_id(req.params.pubid)
                               .then(publicacao => {
-                                res.render('pubs/info', { pub:publicacao,utilizador: req.user });
-                            })
-                            .catch(erro => done(erro))
+                                res.render('pubs/info', { pub: publicacao, utilizador: req.user });
+                              })
+                              .catch(erro => done(erro))
                           })
                           .catch(erro => done(erro))
                       }
@@ -221,14 +222,14 @@ router.post('/pubs/rating/:pubid/:resourceid',verificaAutenticacao, function (re
                       } else {
                         var avg_pub_rating = (result[0]['sumRatings']) / (result[0]['numRatings'])
                         Pub.updatePubRating(req.params.pubid, avg_pub_rating)
-                        .then(() =>{
+                          .then(() => {
                             Pub.find_pub_by_id(req.params.pubid)
-                            .then(publicacao => {
-                              res.render('pubs/info', { pub:publicacao,utilizador: req.user });
+                              .then(publicacao => {
+                                res.render('pubs/info', { pub: publicacao, utilizador: req.user });
+                              })
+                              .catch(erro => done(erro))
                           })
                           .catch(erro => done(erro))
-                        })
-                        .catch(erro => done(erro))
                       }
                     })
                   })
@@ -242,7 +243,7 @@ router.post('/pubs/rating/:pubid/:resourceid',verificaAutenticacao, function (re
   })
 });
 
-router.get('/pubs/upload', verificaAutenticacao,function (req, res) {
+router.get('/pubs/upload', verificaAutenticacao, function (req, res) {
   if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
     var d = new Date().toISOString().substr(0, 16)
     res.render('pubs/form', { utilizador: req.user, d });
@@ -252,7 +253,7 @@ router.get('/pubs/upload', verificaAutenticacao,function (req, res) {
   }
 });
 
-router.get('/pubs/edit/:pubid',verificaAutenticacao, function (req, res) {
+router.get('/pubs/edit/:pubid', verificaAutenticacao, function (req, res) {
   if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
     Pub.find_pub_by_id(req.params.pubid)
       .then(publicacao => {
@@ -265,20 +266,19 @@ router.get('/pubs/edit/:pubid',verificaAutenticacao, function (req, res) {
   }
 });
 
-router.post('/pubs/edit/:pubid', upload.array('myFile'),verificaAutenticacao, function (req, res) {
+router.post('/pubs/edit/:pubid', upload.array('myFile'), verificaAutenticacao, function (req, res) {
   if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
 
     Pub.find_pub_by_id(req.params.pubid)
       .then(publicacao => {
         publicacao.description = req.body.description;
         publicacao.visibility = req.body.visibility;
+        publicacao.resources.theme = req.body.theme
         var i;
         for (i = 0; i < publicacao.resources.length; i++) {
           if (publicacao.resources.length > 1) {
-            publicacao.resources[i].theme = req.body.theme[i]
             publicacao.resources[i].title = req.body.title[i]
           } else {
-            publicacao.resources[i].theme = req.body.theme
             publicacao.resources[i].title = req.body.title
           }
         }
@@ -295,7 +295,7 @@ router.post('/pubs/edit/:pubid', upload.array('myFile'),verificaAutenticacao, fu
   }
 });
 
-router.post('/pubs', upload.array('myFile'), verificaAutenticacao,function (req, res) {
+router.post('/pubs', upload.array('myFile'), verificaAutenticacao, function (req, res) {
   if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
     var i;
     var recursos = []
@@ -304,59 +304,154 @@ router.post('/pubs', upload.array('myFile'), verificaAutenticacao,function (req,
     author = req.user.mail
     description = req.body.description
     visibility = req.body.visibility
-    //por cada ficheiro, guardar na pasta uploads com o nome original
-    for (i = 0; i < req.files.length; i++) {
-      let newPath = path.join(__dirname, '../public/fileStore/', req.files[i].originalname)
-      let oldPath = path.join(__dirname, '../', req.files[i].path)
+    var theme = req.body.theme
+    if (req.body.SIP_check == "on") {
+      var checkManifest = true;
+      let oldPath = path.join(__dirname, '../', req.files[0].path)
+      let dir = path.join(__dirname, '../public/fileStore/SIP')
 
-      fs.rename(oldPath, newPath, function (err) {
+      fse.ensureDir(dir, err => {
         if (err) throw err
       })
 
-      //save extension file
-      extensoes[i] = mime.extension(req.files[i].mimetype);
+      var zip = new AdmZip(oldPath);
 
-      if (req.files.length > 1) {
-        var theme = req.body.theme[i]
-        var title = req.body.title[i]
-      } else {
-        var theme = req.body.theme
-        var title = req.body.title
-      }
+      let tempPath = path.join(__dirname, '../public/fileStore/SIP/')
 
-      recurso = {
-        "type": req.files[i].mimetype,
-        "theme": theme,
-        "title": title,
-        "data_created": d,
-        "extension": extensoes[i],
-        "rating": 0
-      };
-      recursos.push(recurso);
-    }
-    //guardar na BD e mudar nome do ficheiro no repositorio local
-    Pub.insert(author, description, visibility, recursos)
-      .then(dados => {
-        //mudar nome do ficheiro na pasta para o id do ficheiro na bd
-        for (i = 0; i < req.files.length; i++) {
-          var file_name = dados.resources[i].id + '.' + extensoes[i]
+      zip.extractAllTo(tempPath, true);
 
-          dir = path.join(__dirname, '../public/fileStore/', author)
+      let SIP_data = tempPath + 'data/'
+
+      let manifest = zip.readAsText("manifest-sha512.txt").split(/\r?\n/)
+
+      fs.unlink(oldPath, (err) => {
+        if (err) throw err;
+      });
+
+      var nfiles = 0;
+      var filenames = []
+      fs.readdir(SIP_data, function (err, files) {
+        if (err) {
+          console.error("Could not list the directory.", err);
+          process.exit(1);
+        }
+
+        files.forEach(function (filename, index) {
+
+          let sha512Hash = CryptoJS.SHA512(filename).toString()
+          if (sha512Hash != manifest[index]) {
+            checkManifest = false;
+          }
+
+          let dir = path.join(__dirname, '../public/fileStore/', author)
           console.log(dir)
           if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
           }
 
-          let newPath = path.join(dir, file_name)
-          let oldPath = path.join(__dirname, '../public/fileStore/', req.files[i].originalname)
+          let newPath = path.join(dir, filename)
+          let oldPath = path.join(SIP_data, filename)
+
           fs.rename(oldPath, newPath, function (err) {
             if (err) throw err
           })
-        }
-      })
-      .catch(err => res.render('error', { error: err }))
 
-    res.redirect('/users/perfil')
+
+          extensoes[index] = filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2);
+
+          let title = filename.replace(/\.[^/.]+$/, "")
+
+          recurso = {
+            "type": extensoes[index],
+            "hash": sha512Hash,
+            "title": title,
+            "data_created": d,
+            "extension": extensoes[index],
+            "rating": 0
+          };
+          recursos.push(recurso);
+          nfiles = index;
+          filenames.push(filename);
+        });
+
+        //guardar na BD e mudar nome do ficheiro no repositorio local
+        Pub.insert(author, theme, description, visibility, recursos)
+          .then(dados => {
+            console.log("NFiles=  "+nfiles)
+            for (j = 0; j < nfiles+1; j++) {
+              var file_name = dados.resources[j].id + '.' + extensoes[j]
+
+              let dir = path.join(__dirname, '../public/fileStore/', author)
+              let newPath = path.join(dir, file_name)
+              let oldPath = path.join(dir, filenames[j])
+              fs.rename(oldPath, newPath, function (err) {
+                if (err) throw err
+              })
+            }
+            if (checkManifest == false) {
+              alert("SHA512 não estava correto para todos os ficheiros. Mas foi corrigido.")
+            }
+
+            res.redirect('/users/perfil')
+
+          })
+          .catch(err => res.render('error', { error: err }))
+      });
+
+    } else {
+      //por cada ficheiro, guardar na pasta uploads com o nome original
+      for (i = 0; i < req.files.length; i++) {
+        let newPath = path.join(__dirname, '../public/fileStore/', req.files[i].originalname)
+        let oldPath = path.join(__dirname, '../', req.files[i].path)
+
+        fs.rename(oldPath, newPath, function (err) {
+          if (err) throw err
+        })
+
+        //save extension file
+        extensoes[i] = mime.extension(req.files[i].mimetype);
+
+        if (req.files.length > 1) {
+          var title = req.body.title[i]
+        } else {
+          var title = req.body.title
+        }
+
+        recurso = {
+          "type": req.files[i].mimetype,
+          "title": title,
+          "data_created": d,
+          "extension": extensoes[i],
+          "rating": 0
+        };
+        recursos.push(recurso);
+      }
+
+      //guardar na BD e mudar nome do ficheiro no repositorio local
+      Pub.insert(author, theme, description, visibility, recursos)
+        .then(dados => {
+          //mudar nome do ficheiro na pasta para o id do ficheiro na bd
+          for (i = 0; i < req.files.length; i++) {
+            var file_name = dados.resources[i].id + '.' + extensoes[i]
+
+            dir = path.join(__dirname, '../public/fileStore/', author)
+            console.log(dir)
+            fse.ensureDir(dir, err => {
+              if (err) throw err
+            })
+
+            let newPath = path.join(dir, file_name)
+            let oldPath = path.join(__dirname, '../public/fileStore/', req.files[i].originalname)
+            fs.rename(oldPath, newPath, function (err) {
+              if (err) throw err
+            })
+          }
+        })
+        .catch(err => res.render('error', { error: err }))
+
+      res.redirect('/users/perfil')
+
+    }
   }
   else {
     res.send("Nao tens permissoes para aceder a esta pagina")
@@ -364,7 +459,7 @@ router.post('/pubs', upload.array('myFile'), verificaAutenticacao,function (req,
 
 });
 
-router.get('/pubs/delete/:pubid',verificaAutenticacao, function (req, res) {
+router.get('/pubs/delete/:pubid', verificaAutenticacao, function (req, res) {
   let fileStorePath = path.join(__dirname, '../public/fileStore/')
   Pub.find_pub_by_id(req.params.pubid)
     .then(publicacao => {
@@ -385,14 +480,14 @@ router.get('/pubs/delete/:pubid',verificaAutenticacao, function (req, res) {
     .catch(erro => done(erro))
 });
 
-router.get('/pub/:pubid',verificaAutenticacao, function (req, res) {
+router.get('/pub/:pubid', verificaAutenticacao, function (req, res) {
   Pub.find_pub_by_id(req.params.pubid)
     .then(publicacao => {
       console.log(publicacao)
       //usar template para o html em vez de pug
       //res.render('pubs/info', { pub:publicacao,utilizador: req.user });
-      res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
-      res.write(templates.infor(publicacao,req.user))
+      res.writeHead(200, { 'Content-Type': 'text/html;charset=utf-8' })
+      res.write(templates.infor(publicacao, req.user))
       res.end()
     })
     .catch(erro => done(erro))
@@ -402,7 +497,7 @@ router.get('/pub/:pubid',verificaAutenticacao, function (req, res) {
 
 //#region perfis
 //apresenta os dados do utilizador e as suas publicações
-router.get('/perfil',verificaAutenticacao, function (req, res) {
+router.get('/perfil', verificaAutenticacao, function (req, res) {
   mail = req.user.mail
   User.lookUp(mail)
     .then(utilizador => {
@@ -416,7 +511,7 @@ router.get('/perfil',verificaAutenticacao, function (req, res) {
 
 });
 
-router.get('/perfis/:mail',verificaAutenticacao, function (req, res) {
+router.get('/perfis/:mail', verificaAutenticacao, function (req, res) {
   let perfil = req.params.mail;
   let p_user = req.user.mail;
   let role = req.user.role;
@@ -437,9 +532,9 @@ router.get('/perfis/:mail',verificaAutenticacao, function (req, res) {
   else {
     User.lookUp(perfil)
       .then(utilizador => {
-        Pub.lookUp(perfil,role)
+        Pub.lookUp(perfil, role)
           .then(publicacoes => {
-            res.render('perfis', { utilizador: utilizador, pubs: publicacoes, myuser:req.user });
+            res.render('perfis', { utilizador: utilizador, pubs: publicacoes, myuser: req.user });
           })
           .catch(erro => done(erro))
       })
@@ -449,7 +544,7 @@ router.get('/perfis/:mail',verificaAutenticacao, function (req, res) {
 
 });
 
-router.get('/perfil/delete/:pubid',verificaAutenticacao, function (req, res) {
+router.get('/perfil/delete/:pubid', verificaAutenticacao, function (req, res) {
   let fileStorePath = path.join(__dirname, '../public/fileStore/')
   Pub.find_pub_by_id(req.params.pubid)
     .then(publicacao => {
@@ -474,7 +569,7 @@ router.get('/perfil/delete/:pubid',verificaAutenticacao, function (req, res) {
 
 //#region pedido produtor
 
-router.get('/pedidos/', verificaAutenticacao,function (req, res) {
+router.get('/pedidos/', verificaAutenticacao, function (req, res) {
   //se for admin envia a lista de pedidos
   User.list_pedidos_produtor()
     .then(pedidos => {
@@ -483,7 +578,7 @@ router.get('/pedidos/', verificaAutenticacao,function (req, res) {
     .catch(erro => done(erro))
 });
 
-router.post('/pedido-produtor/',verificaAutenticacao, function (req, res) {
+router.post('/pedido-produtor/', verificaAutenticacao, function (req, res) {
   mail = req.user.mail
   User.update_pedir_produtor(mail, "sim")
     .then(utilizador => {
@@ -493,7 +588,7 @@ router.post('/pedido-produtor/',verificaAutenticacao, function (req, res) {
 });
 
 //aceitar pedido
-router.post('/aceitar-pedido/:mail',verificaAutenticacao, function (req, res) {
+router.post('/aceitar-pedido/:mail', verificaAutenticacao, function (req, res) {
   mail = req.params.mail
   User.update_pedir_produtor(mail, "nao")
     .then(utilizador => {
@@ -507,7 +602,7 @@ router.post('/aceitar-pedido/:mail',verificaAutenticacao, function (req, res) {
 });
 
 //recusar pedido
-router.post('/recusar-pedido/:mail',verificaAutenticacao, function (req, res) {
+router.post('/recusar-pedido/:mail', verificaAutenticacao, function (req, res) {
   mail = req.params.mail
   User.update_pedir_produtor(mail, "nao")
     .then(utilizador => {
@@ -518,7 +613,7 @@ router.post('/recusar-pedido/:mail',verificaAutenticacao, function (req, res) {
 
 //#endregion
 
-router.post('/adicionar_comentario',verificaAutenticacao, function (req, res) {
+router.post('/adicionar_comentario', verificaAutenticacao, function (req, res) {
   var d = new Date().toISOString().substr(0, 16)
 
   pub_date = req.body.data
@@ -544,7 +639,7 @@ router.post('/adicionar_comentario',verificaAutenticacao, function (req, res) {
 });
 
 //#region news
-router.get('/news',verificaAutenticacao, function (req, res) {
+router.get('/news', verificaAutenticacao, function (req, res) {
   console.log(req.user)
   var d = new Date().toISOString().substr(0, 16)
   mail = req.user.mail
@@ -556,42 +651,42 @@ router.get('/news',verificaAutenticacao, function (req, res) {
       if (role == "produtor") {
         Pub.list_aux()
           .then(publicacoes => {
-            var p = [] 
+            var p = []
             publicacoes.forEach(element => {
               p.push(element)
             });
             pubs.forEach(element => {
               p.push(element)
             });
-            last_login=req.user.data_last_login
-            var news = get_news(pubs,last_login)
+            last_login = req.user.data_last_login
+            var news = get_news(pubs, last_login)
             res.render('news', { utilizador: req.user, pubs: news, d });
           })
       }
       else {
-        last_login=req.user.data_last_login
-        var news = get_news(pubs,last_login)
+        last_login = req.user.data_last_login
+        var news = get_news(pubs, last_login)
         res.render('news', { utilizador: req.user, pubs: news, d });
       }
     })
     .catch(erro => done(erro))
 });
 
-function get_news(publicacoes,last_login) {
+function get_news(publicacoes, last_login) {
   var news = []
 
   console.log(last_login)
-  var last_login=new Date(last_login.substring(6, 10),last_login.substring(3, 5), last_login.substring(0,2), last_login.substring(12, 14), last_login.substring(15, 17),last_login.substring(18, 20));
-  last_login.setMonth(last_login.getMonth()-1)
-  last_login=Date.parse(last_login)
+  var last_login = new Date(last_login.substring(6, 10), last_login.substring(3, 5), last_login.substring(0, 2), last_login.substring(12, 14), last_login.substring(15, 17), last_login.substring(18, 20));
+  last_login.setMonth(last_login.getMonth() - 1)
+  last_login = Date.parse(last_login)
   publicacoes.forEach(pub => {
-    var data=new Date(pub.data_created.substring(0,4),pub.data_created.substring(5,7), pub.data_created.substring(8,10),pub.data_created.substring(11,13), pub.data_created.substring(14,16),pub.data_created.substring(17,19));
-    data.setMonth(data.getMonth()-1)
-    data=Date.parse(data)
+    var data = new Date(pub.data_created.substring(0, 4), pub.data_created.substring(5, 7), pub.data_created.substring(8, 10), pub.data_created.substring(11, 13), pub.data_created.substring(14, 16), pub.data_created.substring(17, 19));
+    data.setMonth(data.getMonth() - 1)
+    data = Date.parse(data)
 
     var data = Date.parse(pub.data_created)
-    var diffTime = data- last_login
-    if (diffTime >0) {
+    var diffTime = data - last_login
+    if (diffTime > 0) {
       news.push(pub)
     }
   })
@@ -600,13 +695,12 @@ function get_news(publicacoes,last_login) {
 
 //#endregion
 
-function verificaAutenticacao(req,res,next)
-{
+function verificaAutenticacao(req, res, next) {
   console.log('User (verif.: )' + JSON.stringify(req.user))
-  if(req.isAuthenticated()){
+  if (req.isAuthenticated()) {
     next();
   }
-  else{
+  else {
     res.redirect("/users/login");
   }
 }

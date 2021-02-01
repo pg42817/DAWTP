@@ -3,6 +3,7 @@ var uniqueValidator = require('mongoose-unique-validator');
 
 var pubSchema = new mongoose.Schema({
     author: { type:String,required : true},
+    theme: { type:String,required : true},
     description: { type:String,required : true},
     data_created: { type:String,required : true},
     visibility:{ type:String,required : true},
@@ -10,7 +11,7 @@ var pubSchema = new mongoose.Schema({
     resources:[{
         extension: { type:String,required : true},
         type: { type:String,required : true},
-        theme: { type:String,required : true},
+        hash: { type:String,required : true},
         title: { type:String,required : true},
         data_created: { type:String,required : true},
         rating: { type: Number, required: true },

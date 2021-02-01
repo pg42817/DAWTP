@@ -3,14 +3,6 @@ function extraFiles() {
     <div class="w3-row w3-margin-bottom"  id="extra_files>
         <div class="w3-row w3-margin-bottom">
             <div class="w3-col s3">
-                <label class="w3-text-blue"><b>Tema</b></label>
-            </div>
-            <div class="w3-col s9 w3-border">
-                <input class="w3-input w3-border w3-light-grey" type="text" name="theme" required>
-            </div>
-        </div>
-        <div class="w3-row w3-margin-bottom">
-            <div class="w3-col s3">
                 <label class="w3-text-blue"><b>Titulo</b></label>
             </div>
             <div class="w3-col s9 w3-border">
