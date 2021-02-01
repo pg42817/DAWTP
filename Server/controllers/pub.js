@@ -252,10 +252,11 @@ module.exports.updatePubRating = (pub_id, newvalue) => {
 
 
 
-module.exports.insert = (author, description, visibility, resources) => {
+module.exports.insert = (author, theme, description, visibility, resources) => {
     data = new Date().toISOString()
     var newPub = new Pub()
     newPub.author = author
+    newPub.theme = theme
     newPub.description = description
     newPub.visibility = visibility
     newPub.resources = resources
