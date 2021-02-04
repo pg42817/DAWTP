@@ -14,6 +14,7 @@ var fse = require('fs-extra')
 var mime = require('mime-types')
 var CryptoJS = require('crypto-js');
 const { body, validationResult } = require('express-validator');
+const { get } = require('http');
 var upload = multer({ dest: 'uploads/' })
 
 //#region Registo
@@ -103,7 +104,6 @@ router.post('/login', passport.authenticate('local', {
   console.log('Na cb do POST login...')
   console.log('Do form: ' + JSON.stringify(req.body))
   console.log('Do passport: ' + JSON.stringify(req.user))
-  console.log('\n\nAQUI 3\n\n')
   res.redirect('/mural')
 })
 
@@ -245,7 +245,7 @@ router.post('/pubs/rating/:pubid/:resourceid', verificaAutenticacao, function (r
 
 router.get('/pubs/upload', verificaAutenticacao, function (req, res) {
   if (req.isAuthenticated() && (req.user.role == "produtor" || req.user.role == "administrador")) {
-    var d = new Date().toISOString().substr(0, 16)
+    var d = new Date().toLocaleDateString('pt-PT', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
     res.render('pubs/form', { utilizador: req.user, d });
   }
   else {
@@ -273,7 +273,7 @@ router.post('/pubs/edit/:pubid', upload.array('myFile'), verificaAutenticacao, f
       .then(publicacao => {
         publicacao.description = req.body.description;
         publicacao.visibility = req.body.visibility;
-        publicacao.resources.theme = req.body.theme
+        publicacao.theme = req.body.theme
         var i;
         for (i = 0; i < publicacao.resources.length; i++) {
           if (publicacao.resources.length > 1) {
@@ -300,7 +300,8 @@ router.post('/pubs', upload.array('myFile'), verificaAutenticacao, function (req
     var i;
     var recursos = []
     var extensoes = []
-    var d = new Date().toISOString()
+    var d = new Date().toLocaleDateString('pt-PT', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
+    d= d.toString();
     author = req.user.mail
     description = req.body.description
     visibility = req.body.visibility
@@ -417,9 +418,12 @@ router.post('/pubs', upload.array('myFile'), verificaAutenticacao, function (req
           var title = req.body.title
         }
 
+        let sha512Hash = CryptoJS.SHA512(req.files[i].originalname).toString()
+
         recurso = {
           "type": req.files[i].mimetype,
           "title": title,
+          "hash": sha512Hash,
           "data_created": d,
           "extension": extensoes[i],
           "rating": 0
@@ -614,7 +618,7 @@ router.post('/recusar-pedido/:mail', verificaAutenticacao, function (req, res) {
 //#endregion
 
 router.post('/adicionar_comentario', verificaAutenticacao, function (req, res) {
-  var d = new Date().toISOString().substr(0, 16)
+  var d = new Date().toLocaleDateString('pt-PT', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
 
   pub_date = req.body.data
   text = req.body.text
@@ -639,54 +643,26 @@ router.post('/adicionar_comentario', verificaAutenticacao, function (req, res) {
 });
 
 //#region news
+//#region news
 router.get('/news', verificaAutenticacao, function (req, res) {
-  console.log(req.user)
-  var d = new Date().toISOString().substr(0, 16)
-  mail = req.user.mail
-  role = req.user.role
-
-  Pub.list(mail, role)
+  Pub.list()
     .then(pubs => {
-      //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
-      if (role == "produtor") {
-        Pub.list_aux()
-          .then(publicacoes => {
-            var p = []
-            publicacoes.forEach(element => {
-              p.push(element)
-            });
-            pubs.forEach(element => {
-              p.push(element)
-            });
-            last_login = req.user.data_last_login
-            var news = get_news(pubs, last_login)
-            res.render('news', { utilizador: req.user, pubs: news, d });
-          })
-      }
-      else {
-        last_login = req.user.data_last_login
-        var news = get_news(pubs, last_login)
-        res.render('news', { utilizador: req.user, pubs: news, d });
-      }
+        var news = get_news(pubs)
+        res.render('news', { utilizador: req.user, pubs: news});
     })
     .catch(erro => done(erro))
 });
 
-function get_news(publicacoes, last_login) {
+function get_news(publicacoes) {
   var news = []
-
-  console.log(last_login)
-  var last_login = new Date(last_login.substring(6, 10), last_login.substring(3, 5), last_login.substring(0, 2), last_login.substring(12, 14), last_login.substring(15, 17), last_login.substring(18, 20));
-  last_login.setMonth(last_login.getMonth() - 1)
-  last_login = Date.parse(last_login)
   publicacoes.forEach(pub => {
-    var data = new Date(pub.data_created.substring(0, 4), pub.data_created.substring(5, 7), pub.data_created.substring(8, 10), pub.data_created.substring(11, 13), pub.data_created.substring(14, 16), pub.data_created.substring(17, 19));
-    data.setMonth(data.getMonth() - 1)
-    data = Date.parse(data)
-
-    var data = Date.parse(pub.data_created)
-    var diffTime = data - last_login
-    if (diffTime > 0) {
+    var data = new Date().toLocaleDateString('pt-PT', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
+    data= Date.parse(data)
+    data_created=Date.parse(pub.data_created)
+    var diff = (data - data_created)
+    var hours = 60 * 60 * 24 * 1000
+    if (diff<hours)
+    {
       news.push(pub)
     }
   })

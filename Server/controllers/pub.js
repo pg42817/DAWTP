@@ -3,151 +3,49 @@ var Pub = require('../models/pub')
 var mongoose = require('mongoose')
 
 
-module.exports.list = (mail, role) => {
-    if (role == "administrador") {
+module.exports.list = () => {
         return Pub
-            .find()
+            .find({"visibility":"Público"})
             .sort({ author: 1 })
             .exec()
-    }
-    if (role == "produtor") {
-        return Pub
-            .find()
-            .where('visibility').equals('Privado')
-            .where('author').equals(mail)
-            .sort({ author: 1 })
-            .exec()
-    }
-    if (role == "consumidor") {
-        return Pub
-            .find()
-            .where('visibility').equals('Público')
-            .sort({ author: 1 })
-            .exec()
-    }
+   
 }
 
-module.exports.listOrder = (mail, role,sort, order) => {
-    if (role == "administrador") {
+module.exports.listOrder = (sort, order) => {
         return Pub
-            .find()
+            .find({"visibility":"Público"})
             .sort({ [sort]: order })
             .exec()
-    }
-    if (role == "produtor") {
-        return Pub
-            .find()
-            .where('visibility').equals('Privado')
-            .where('author').equals(mail)
-            .sort({ [sort]: order })
-            .exec()
-    }
-    if (role == "consumidor") {
-        return Pub
-            .find()
-            .where('visibility').equals('Público')
-            .sort({ [sort]: order })
-            .exec()
-    }
 }
 
-//funçao para complementar o list dos produtores
-module.exports.list_aux = (sort, order) => {
-    return Pub
-        .find()
-        .where('visibility').equals('Público')
-        .sort({ [sort]: order})
-        .exec()
+module.exports.list_by_title = (recnome) => {
+        return Pub
+            .find({ "resources": { "$elemMatch": { "title": {$regex:recnome,$options:"$i" } } },"visibility":"Público" })
+            .sort({ author: 1 })
+            .exec()
 }
 
-module.exports.list_by_title = (mail, role, recnome) => {
-    if (role == "administrador") {
+module.exports.list_by_theme = (recnome) => {
         return Pub
-            .find({ "resources": { "$elemMatch": { "title": recnome } } })
+            .find({ "theme": {$regex:recnome,$options:"$i" },"visibility":"Público" })
             .sort({ author: 1 })
             .exec()
-    }
-    if (role == "produtor") {
-        return Pub
-            .find({ "author": mail, "visibility": "Privado", "resources": { "$elemMatch": { "title": recnome } } })
-            .sort({ author: 1 })
-            .exec()
-    }
-    if (role == "consumidor") {
-        return Pub
-            .find({ "visibility": "Público", "resources": { "$elemMatch": { "title": recnome } } })
-            .sort({ author: 1 })
-            .exec()
-    }
+  
 }
 
-//funçao para complementar o list dos produtores
-module.exports.list_aux_by_title = (mail, recnome) => {
-    return Pub
-        .find({ 'author': { $ne: 'author' }, "visibility": "Público", "resources": { "$elemMatch": { "title": recnome } } })
-        .sort({ author: 1 })
-        .exec()
+module.exports.list_by_date = (date) => {
+        return Pub
+            .find({ "data_created": { "$regex": "^" + date + ".*" },"visibility":"Público" })
+            .sort({ author: 1 })
+            .exec()
 }
 
-module.exports.list_by_date = (mail, role, date) => {
-    if (role == "administrador") {
+module.exports.list_by_date_and_title = (date, recnome) => {
         return Pub
-            .find({ "data_created": { "$regex": "^" + date + ".*" } })
+            .find({ "data_created": { "$regex": "^" + date + ".*" }, $or:[ {"resources": { "$elemMatch": { "title": recnome }}},{"theme": recnome}],"visibility":"Público" })
             .sort({ author: 1 })
             .exec()
-    }
-    if (role == "produtor") {
-        return Pub
-            .find({ "author": mail, "visibility": "Privado", "data_created": { "$regex": "^" + date + ".*" } })
-            .sort({ author: 1 })
-            .exec()
-    }
-    if (role == "consumidor") {
-        return Pub
-            .find({ "visibility": "Público", "data_created": { "$regex": "^" + date + ".*" } })
-            .sort({ author: 1 })
-            .exec()
-    }
 }
-
-//funçao para complementar o list dos produtores
-module.exports.list_aux_by_date = (mail, date) => {
-    return Pub
-        .find({ 'author': { $ne: 'author' }, "visibility": "Público", "data_created": { "$regex": "^" + date + ".*" } })
-        .sort({ author: 1 })
-        .exec()
-}
-
-
-module.exports.list_by_date_and_title = (mail, role, date, recnome) => {
-    if (role == "administrador") {
-        return Pub
-            .find({ "data_created": { "$regex": "^" + date + ".*" }, "resources": { "$elemMatch": { "title": recnome } } })
-            .sort({ author: 1 })
-            .exec()
-    }
-    if (role == "produtor") {
-        return Pub
-            .find({ "author": mail, "visibility": "Privado", "data_created": { "$regex": "^" + date + ".*" }, "resources": { "$elemMatch": { "title": recnome } } })
-            .sort({ author: 1 })
-            .exec()
-    }
-    if (role == "consumidor") {
-        return Pub
-            .find({ "visibility": "Público", "data_created": { "$regex": "^" + date + ".*" }, "resources": { "$elemMatch": { "title": recnome } } })
-            .sort({ author: 1 })
-            .exec()
-    }
-}
-
-//funçao para complementar o list dos produtores
-module.exports.list_aux_by_date_and_title = (mail, date, recnome) => {
-    return Pub
-        .find({ 'author': { $ne: 'author' }, "visibility": "Público", "data_created": { "$regex": "^" + date + ".*" }, "resources": { "$elemMatch": { "title": recnome } } })
-        .sort({ author: 1 })
-        .exec()
-}
-
 
 //devolve as publicacoes de um autor
 module.exports.my_lookUp = (author) => {
@@ -303,7 +201,7 @@ module.exports.find_pub_by_id = (pub_id) => {
 
 
 module.exports.edit_pub = (pub_id, pub) => {
-
+    console.log("\n\n"+pub_id+"\n\n")
     return Pub
         .updateOne({ _id: pub_id }, { $set: { resources: pub.resources, author: pub.author, description: pub.description, visibility: pub.visibility } })
         .exec()

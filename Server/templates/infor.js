@@ -42,7 +42,8 @@ function infor(pub,utilizador){
             }
             pagHTML +=`
             <div class="w3-container w3-card-4" style="width:1000px">
-            <p style="text-align: justify;text-justify: inter-word;"> ${pub.description}</p>   
+            <p style="text-align: justify;text-justify: inter-word;"> <b>Tema: </b> ${pub.theme}</p>   
+            <p style="text-align: justify;text-justify: inter-word;"> <b>Descrição: </b>${pub.description}</p>   
             <p> Avaliação da publicação: ${pub.pub_rating}</p> 
             <div> 
                 <button class="accordion">Recursos</button>

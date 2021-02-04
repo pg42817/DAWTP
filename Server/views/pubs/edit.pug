@@ -18,6 +18,12 @@ block content
             br
             #1st_File.w3-row.w3-margin-bottom
                 .w3-row.w3-margin-bottom
+                        .w3-col.s3
+                            label.w3-text-blue
+                                b Tema
+                        .w3-col.s9.w3-border
+                            input.w3-input.w3-border.w3-light-grey(type='text' name='theme' value=pub.theme)
+                .w3-row.w3-margin-bottom
                     .w3-col.s3
                         label.w3-text-blue
                             b Descricao da publicação
@@ -32,20 +38,15 @@ block content
                             <option value="Privado"> Privado
                             <option value="Público"> Público
                         </select>
+                    
                 each recurso in pub.resources
-                    .w3-row.w3-margin-bottom
-                        .w3-col.s3
-                            label.w3-text-blue
-                                b Tema
-                        .w3-col.s9.w3-border
-                            input.w3-input.w3-border.w3-light-grey(type='text' name='theme' value=recurso.theme)
+                    
                     .w3-row.w3-margin-bottom
                         .w3-col.s3
                             label.w3-text-blue
                                 b Titulo
                         .w3-col.s3.w3-border
                             input.w3-input.w3-border.w3-light-grey(type='text' name='title' value=recurso.title)
-                        img(src='/download_icon.png' style="display: inline-block;width:35px;height:35px")(onclick='showFile(' + '"' + recurso.id + '"' + ','+ '"' + recurso.extension + '"' + ','+ '"' +  pub.author + '"' + ',' + '"' + recurso.title + '"' + ')')      
             input.w3-btn.w3-blue-grey(type='submit' value='Confirmar alterações')
     </div>
  
