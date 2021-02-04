@@ -20,14 +20,22 @@ module.exports.listOrder = (sort, order) => {
 
 module.exports.list_by_title = (recnome) => {
         return Pub
+<<<<<<< HEAD
             .find({ "resources": { "$elemMatch": { "title": {$regex:recnome,$options:"$i" } } },"visibility":"Público" })
+=======
+            .find({ "resources": { "$elemMatch": { "title": recnome } },"visibility":"Público" })
+>>>>>>> daddc8b67866385d04a9683a105e0fef68512a97
             .sort({ author: 1 })
             .exec()
 }
 
 module.exports.list_by_theme = (recnome) => {
         return Pub
+<<<<<<< HEAD
             .find({ "theme": {$regex:recnome,$options:"$i" },"visibility":"Público" })
+=======
+            .find({ "theme": recnome,"visibility":"Público" })
+>>>>>>> daddc8b67866385d04a9683a105e0fef68512a97
             .sort({ author: 1 })
             .exec()
   
