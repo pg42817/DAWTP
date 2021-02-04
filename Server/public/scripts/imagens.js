@@ -42,7 +42,7 @@ function showFile(id,extensao,autor,name) {
             <b><label class="w3-text-blue">Extensão: </label></b> ${extensao}
         </div>
     `)
-    var download = $('<div style="vertical-align:middle; text-align:center;"><a class="w3-button w3-blue" href="/users/pubs/download/' + id + '.' + extensao+ '/' + autor + '">Download</a></div>')
+    var download = $('<div style="vertical-align:middle; text-align:center;"><a class="w3-button w3-blue" href="/users/pubs/download/' + id + '.' + extensao+ '/'+ name +'/' + autor + '">Download</a></div>')
     $("#display").empty()
     $("#display").append(fileObj, download)
     $("#display").modal('show')

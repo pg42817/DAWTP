@@ -74,6 +74,8 @@ function infor(pub,utilizador){
                             </div>`
             }})            
                 
+            pagHTML += `<a class="w3-bar-item w3-button w3-blue-grey" href="/users/pubs/downloadtodos/${pub.id}/${pub.author}" style="float: left">Download de todos os recursos</a>`
+
             pagHTML += `</div>
             <p>Comentários</p>`
 

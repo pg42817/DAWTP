@@ -122,7 +122,8 @@ router.get('/logout', function (req, res) {
 
 //#region pubs
 
-router.get('/pubs/download/:fname/:autor', verificaAutenticacao, (req, res) => {
+
+router.get('/pubs/download/:fileid/:filename/:autor', verificaAutenticacao, (req, res) => {
   if (req.isAuthenticated() && (req.user.role == "consumidor" || req.user.role == "produtor" || req.user.role == "administrador")) {
     let filePath = path.join(__dirname, '../public/fileStore/', req.params.autor, '/')
     let zipPath = path.join(__dirname, '../public/fileStore/zip')
@@ -131,16 +132,23 @@ router.get('/pubs/download/:fname/:autor', verificaAutenticacao, (req, res) => {
 
     fse.outputFileSync(bagitPath, 'BagIt-version: 1.0\nTag-File-Character-Encoding: UTF-8')
 
-    let file = fse.readFile(filePath + req.params.fname)
+    console.log(res)
+
+    let file = fse.readFile(filePath + req.params.fileid)
     let sha512Hash = CryptoJS.SHA512(file).toString()
-    fse.outputFileSync(manifestPath, sha512Hash + ' data/' + req.params.fname)
+
+    let extension = req.params.fileid.slice((req.params.fileid.lastIndexOf(".") - 1 >>> 0) + 2);
+
+    fse.outputFileSync(manifestPath, sha512Hash + ' data/' + req.params.filename + '.' + extension)
     fse.ensureDirSync(zipPath + '/data');
-    fs.copyFile((filePath + req.params.fname), (zipPath + '/data/' + req.params.fname), (err) => {
+    fs.copyFile((filePath + req.params.fileid), (zipPath + '/data/' + req.params.filename + '.' + extension), (err) => {
       if (err) throw err;
-      console.log(filePath + req.params.fname + ' was copied to ' + zipPath + '/data/' + req.params.fname);
+      console.log(filePath + req.params.fileid + ' was copied to ' + zipPath + '/data/' + req.params.fileid);
     });
 
-    var zipname = filePath + 'DIP.zip'
+
+
+    var zipname = filePath + req.params.filename + '_DIP.zip'
 
     var archive = archiver('zip');
 
@@ -162,6 +170,74 @@ router.get('/pubs/download/:fname/:autor', verificaAutenticacao, (req, res) => {
     archive.directory(zipPath, false);
 
     archive.finalize();
+  }
+  else {
+    res.send("Nao tens permissoes para aceder a esta pagina")
+  }
+});
+
+router.get('/pubs/downloadtodos/:pubid/:autor', verificaAutenticacao, (req, res) => {
+  if (req.isAuthenticated() && (req.user.role == "consumidor" || req.user.role == "produtor" || req.user.role == "administrador")) {
+    let filePath = path.join(__dirname, '../public/fileStore/', req.params.autor, '/')
+    let zipPath = path.join(__dirname, '../public/fileStore/zip')
+    let bagitPath = zipPath + '/bagit.txt'
+    let manifestPath = zipPath + '/manifest-sha512.txt'
+    var checkManifest = true
+
+    fse.outputFileSync(bagitPath, 'BagIt-version: 1.0\nTag-File-Character-Encoding: UTF-8')
+
+    fse.outputFileSync(manifestPath, "")
+
+
+    fse.ensureDirSync(zipPath + '/data');
+
+    Pub.find_pub_by_id(req.params.pubid)
+      .then(publicacao => {
+        for (i = 0; i < publicacao.resources.length; i++) {
+
+          let filename = publicacao.resources[i].id + '.' + publicacao.resources[i].extension
+          let file = fse.readFile(filePath + filename)
+          let sha512Hash = CryptoJS.SHA512(file).toString()
+          let checksum = publicacao.resources[i].hash
+
+          if (sha512Hash != checksum) {
+            checkManifest = false;
+          }
+
+          let realfilename = publicacao.resources[i].title + '.' + publicacao.resources[i].extension
+
+          fs.appendFileSync(manifestPath, sha512Hash + ' data/' + realfilename + "\n");
+          fs.copyFile((filePath + filename), (zipPath + '/data/' + realfilename), (err) => {
+            if (err) throw err;
+            console.log(filePath + realfilename + ' was copied to ' + zipPath + '/data/' + realfilename);
+          });
+        }
+
+        var zipname = filePath + req.params.pubid + '_DIP.zip'
+
+        var archive = archiver('zip');
+
+        archive.on('error', function (err) {
+          throw err;
+        });
+
+        archive.on('end', function () {
+          console.log(archive.pointer() + ' total bytes');
+          console.log('archiver has been finalized and the output file descriptor has closed.');
+          fse.remove(zipPath)
+          fse.remove(filePath + 'DIP.zip')
+        });
+
+        res.attachment(zipname);
+
+        archive.pipe(res);
+
+        archive.directory(zipPath, false);
+
+        archive.finalize();
+
+      })
+      .catch(erro => done(erro))
   }
   else {
     res.send("Nao tens permissoes para aceder a esta pagina")
@@ -193,7 +269,11 @@ router.post('/pubs/rating/:pubid/:resourceid', verificaAutenticacao, function (r
                           .then(() => {
                             Pub.find_pub_by_id(req.params.pubid)
                               .then(publicacao => {
-                                res.render('pubs/info', { pub: publicacao, utilizador: req.user });
+                                //usar template para o html em vez de pug
+                                //res.render('pubs/info', { pub:publicacao,utilizador: req.user });
+                                res.writeHead(200, { 'Content-Type': 'text/html;charset=utf-8' })
+                                res.write(templates.infor(publicacao, req.user))
+                                res.end()
                               })
                               .catch(erro => done(erro))
                           })
@@ -225,7 +305,11 @@ router.post('/pubs/rating/:pubid/:resourceid', verificaAutenticacao, function (r
                           .then(() => {
                             Pub.find_pub_by_id(req.params.pubid)
                               .then(publicacao => {
-                                res.render('pubs/info', { pub: publicacao, utilizador: req.user });
+                                //usar template para o html em vez de pug
+                                //res.render('pubs/info', { pub:publicacao,utilizador: req.user });
+                                res.writeHead(200, { 'Content-Type': 'text/html;charset=utf-8' })
+                                res.write(templates.infor(publicacao, req.user))
+                                res.end()
                               })
                               .catch(erro => done(erro))
                           })
@@ -301,7 +385,7 @@ router.post('/pubs', upload.array('myFile'), verificaAutenticacao, function (req
     var recursos = []
     var extensoes = []
     var d = new Date().toLocaleDateString('pt-PT', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
-    d= d.toString();
+    d = d.toString();
     author = req.user.mail
     description = req.body.description
     visibility = req.body.visibility
@@ -378,8 +462,8 @@ router.post('/pubs', upload.array('myFile'), verificaAutenticacao, function (req
         //guardar na BD e mudar nome do ficheiro no repositorio local
         Pub.insert(author, theme, description, visibility, recursos)
           .then(dados => {
-            console.log("NFiles=  "+nfiles)
-            for (j = 0; j < nfiles+1; j++) {
+            console.log("NFiles=  " + nfiles)
+            for (j = 0; j < nfiles + 1; j++) {
               var file_name = dados.resources[j].id + '.' + extensoes[j]
 
               let dir = path.join(__dirname, '../public/fileStore/', author)
@@ -647,8 +731,8 @@ router.post('/adicionar_comentario', verificaAutenticacao, function (req, res) {
 router.get('/news', verificaAutenticacao, function (req, res) {
   Pub.list()
     .then(pubs => {
-        var news = get_news(pubs)
-        res.render('news', { utilizador: req.user, pubs: news});
+      var news = get_news(pubs)
+      res.render('news', { utilizador: req.user, pubs: news });
     })
     .catch(erro => done(erro))
 });
@@ -657,12 +741,11 @@ function get_news(publicacoes) {
   var news = []
   publicacoes.forEach(pub => {
     var data = new Date().toLocaleDateString('pt-PT', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
-    data= Date.parse(data)
-    data_created=Date.parse(pub.data_created)
+    data = Date.parse(data)
+    data_created = Date.parse(pub.data_created)
     var diff = (data - data_created)
     var hours = 60 * 60 * 24 * 1000
-    if (diff<hours)
-    {
+    if (diff < hours) {
       news.push(pub)
     }
   })

@@ -4,62 +4,56 @@ var mongoose = require('mongoose')
 
 
 module.exports.list = () => {
-        return Pub
-            .find({"visibility":"Público"})
-            .sort({ author: 1 })
-            .exec()
-   
+    return Pub
+        .find({ "visibility": "Público" })
+        .sort({ author: 1 })
+        .exec()
+
 }
 
 module.exports.listOrder = (sort, order) => {
-        return Pub
-            .find({"visibility":"Público"})
-            .sort({ [sort]: order })
-            .exec()
+    return Pub
+        .find({ "visibility": "Público" })
+        .sort({ [sort]: order })
+        .exec()
 }
 
 module.exports.list_by_title = (recnome) => {
-        return Pub
-<<<<<<< HEAD
-            .find({ "resources": { "$elemMatch": { "title": {$regex:recnome,$options:"$i" } } },"visibility":"Público" })
-=======
-            .find({ "resources": { "$elemMatch": { "title": recnome } },"visibility":"Público" })
->>>>>>> daddc8b67866385d04a9683a105e0fef68512a97
-            .sort({ author: 1 })
-            .exec()
+    return Pub
+        .find({ "resources": { "$elemMatch": { "title": { $regex: recnome, $options: "$i" } } }, "visibility": "Público" })
+
+        .sort({ author: 1 })
+        .exec()
 }
 
 module.exports.list_by_theme = (recnome) => {
-        return Pub
-<<<<<<< HEAD
-            .find({ "theme": {$regex:recnome,$options:"$i" },"visibility":"Público" })
-=======
-            .find({ "theme": recnome,"visibility":"Público" })
->>>>>>> daddc8b67866385d04a9683a105e0fef68512a97
-            .sort({ author: 1 })
-            .exec()
-  
+    return Pub
+        .find({ "theme": { $regex: recnome, $options: "$i" }, "visibility": "Público" })
+
+        .sort({ author: 1 })
+        .exec()
+
 }
 
 module.exports.list_by_date = (date) => {
-        return Pub
-            .find({ "data_created": { "$regex": "^" + date + ".*" },"visibility":"Público" })
-            .sort({ author: 1 })
-            .exec()
+    return Pub
+        .find({ "data_created": { "$regex": "^" + date + ".*" }, "visibility": "Público" })
+        .sort({ author: 1 })
+        .exec()
 }
 
 module.exports.list_by_date_and_title = (date, recnome) => {
-        return Pub
-            .find({ "data_created": { "$regex": "^" + date + ".*" }, $or:[ {"resources": { "$elemMatch": { "title": recnome }}},{"theme": recnome}],"visibility":"Público" })
-            .sort({ author: 1 })
-            .exec()
+    return Pub
+        .find({ "data_created": { "$regex": "^" + date + ".*" }, $or: [{ "resources": { "$elemMatch": { "title": recnome } } }, { "theme": recnome }], "visibility": "Público" })
+        .sort({ author: 1 })
+        .exec()
 }
 
 //devolve as publicacoes de um autor
 module.exports.my_lookUp = (author) => {
     return Pub
         .find({ author: author })
-        .sort({data_created:-1})
+        .sort({ data_created: -1 })
         .exec()
 }
 
@@ -209,7 +203,7 @@ module.exports.find_pub_by_id = (pub_id) => {
 
 
 module.exports.edit_pub = (pub_id, pub) => {
-    console.log("\n\n"+pub_id+"\n\n")
+    console.log("\n\n" + pub_id + "\n\n")
     return Pub
         .updateOne({ _id: pub_id }, { $set: { resources: pub.resources, author: pub.author, description: pub.description, visibility: pub.visibility } })
         .exec()
