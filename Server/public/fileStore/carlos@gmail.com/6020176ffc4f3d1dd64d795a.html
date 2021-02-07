@@ -1,0 +1,242 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+      <meta charset="utf-8">
+      <title>Arquivo de Fichas Práticas do JCR</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="prc2018-f1_ficheiros/bootstrap.css">
+   </head>
+   <body style="padding-top:50px;">
+      <div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+         <div class="container">
+            <div class="navbar-header">
+               <a href="http://www4.di.uminho.pt/~jcr/AULAS/didac/RepFichas/site/index.php" class="navbar-brand">Arquivo Fichas Práticas</a>
+               <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+                  <span class="icon-bar">
+                  <span class="icon-bar">
+                  <span class="icon-bar">
+               </span></span></span></button>
+            </div>
+            <div class="navbar-collapse collapse" id="navbar-main">
+               <ul class="nav navbar-nav">
+                  <li>
+                     <a href="http://www4.di.uminho.pt/~jcr/AULAS/didac/RepFichas/site/index-fichas.html">Fichas</a>
+                  </li>
+                  <li>
+                     <a href="http://www4.di.uminho.pt/~jcr/AULAS/didac/RepFichas/site/index-fichas-categ.html">Fichas/Tema</a>
+                  </li>
+               </ul>
+               <ul class="nav navbar-nav navbar-right">
+                  <li>
+                     <a href="http://www4.di.uminho.pt/~jcr/AULAS/didac/RepFichas/site/logs.html">Registo de Alterações</a>
+                  </li>
+               </ul>
+            </div>
+         </div>
+      </div>
+      <div class="container">
+         <div class="row">
+            <div class="col-sm-5 col-md-5">
+               <img class="img-responsive" src="prc2018-f1_ficheiros/fichas.jpeg">
+            </div>
+            <div class="col-sm-7 col-md-7">
+               <h2>Ficha prc2018-f1</h2>
+               <h3>SPARQL</h3>
+            </div>
+         </div>
+         <div class="panel panel-default">
+            <div class="panel-body">
+               <a name="ind-ex">
+               <p class="lead">Processamento e Representação de Conhecimento - PRC (MIEI - 4ºano)</p>
+               <p>
+                  </p><p>Este ficha prática contem exercícios para serem resolvidos nas aulas
+                teórico-práticas com vista a sedimentar os conhecimentos relativos a: </p><ul>
+                        <li>Interrogação de ontologias com SPARQL.</li>
+                     </ul>
+                  <p></p>
+               <p></p>
+               <div class="container">
+                  <table>
+                     <tbody>
+                        <tr>
+                           <td valign="top">
+                              <h3>Recursos:</h3>
+                           </td>
+                           <td>
+                        </td></tr>
+                        <tr>
+                           <td>
+                           </td><td>
+                              <div class="para"> Recursos disponíveis para a realização da ficha:</div>
+                              <br>
+                              <ul>
+                                 <li>
+                                    <a href="http://www4.di.uminho.pt/~jcr/AULAS/didac/RepFichas/site/datasets/Periodic_Table.rdf">Ontologia sobre a tabela periódica dos elementos.</a>
+                                 </li>
+                                 <li>
+                                    <a href="http://www4.di.uminho.pt/~jcr/AULAS/didac/RepFichas/site/datasets/Histria_de_Portugal.rdf">Ontologia sobre a História de Portugal.</a>
+                                 </li>
+                              </ul>
+                           </td>
+                        </tr>
+                        <tr>
+                           <td>
+                              <h3>
+                Exercícios:
+              </h3>
+                           </td>
+                           <td>
+                        </td></tr>
+                        <tr>
+                           <td>
+                           </td><td>
+                              <ol>
+                                 <a name="ind-ex">
+                                 </a><li><a name="ind-ex">
+                                    </a><a href="#e1">Tabela Periódica dos Elementos</a>
+                                 </li>
+                                 <a name="ind-ex">
+                                 </a><li><a name="ind-ex">
+                                    </a><a href="#e2">História de Portugal</a>
+                                 </li>
+                                 <a name="ind-ex">
+                                 </a><li><a name="ind-ex">
+                                    </a><a href="#e3">MusicBrainz</a>
+                                 </li>
+                                 <a name="ind-ex">
+                                 </a><li><a name="ind-ex">
+                                    </a><a href="#e4">DBPedia</a>
+                                 </li>
+                              </ol>
+                           </td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+               <hr>
+               </a><div class="panel panel-default"><a name="ind-ex">
+                  </a><div class="panel-footer"><a name="ind-ex">
+                     <p>Generated by xfichas app by jcr::2015-02-24</p>
+                     </a><p><a name="ind-ex">[</a><a href="http://www4.di.uminho.pt/~jcr/AULAS/didac/RepFichas/site/">Voltar ao índice de fichas</a>]</p>
+                  </div>
+               </div>
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <a name="e1">
+                     <h3 class="panel-title">Exercício Nº 1:
+            Tabela Periódica dos Elementos</h3>
+                  </a></div><a name="e1">
+                  <div class="panel-body">
+                     <p>Considera a ontologia em formato RDF sobre a tabela periódica de elementos
+                    dosponível em cima e tenta responder às alíneas seguintes.</p>
+                     <ol class="a">
+                        <li>Abre a ontologia no Protégé e realiza algumas queries exploratórias em
+                        SPARQL: que classes existem na ontologia, que propriedades aasociadas às
+                        classes principais;</li>
+                        <li>Especifica uma query SPARQL para responder à questão: Quantos elementos
+                        há na tabela periódica?</li>
+                        <li>Especifica uma query SPARQL para responder à questão: Qual o símbolo, o
+                        nome e o número atómico de cada elemento? </li>
+                        <li>Obtenha a última lista ordenada por número atómico.</li>
+                        <li>Especifica uma query SPARQL para responder à questão: Quais são os 3
+                        elementos com maior número atómico?</li>
+                        <li>Cada elemento na tabela pertence a um grupo. Obtenha o número e o nome
+                        de cada grupo (há cerca de 20 grupos). </li>
+                        <li>Obtenha o nome, o símbolo e o número atómico dos elementos do grupo
+                        18.</li>
+                        <li>Qual o número de elementos em cada grupo? (distribuição dos elementos
+                        por grupos)</li>
+                        <li>Quais os 5 grupos com mais elementos?</li>
+                        <li>Qual a média dos números atómicos dos elementos na tabela?</li>
+                        <li>Qual o maior número atómico na tabela?</li>
+                        <li>Qual o menor número atómico na tabela?</li>
+                        <li>Qual o nome do elemento com esse número atómico?</li>
+                        <li>Acrescenta à ontologia o conceito de molécula com as propriedades
+                        suficientes para adicionares algumas instâncias como: água (H2O), dióxido de
+                        carbono (CO2), amoníaco (NH3), metano (C2H6), glicose (C6H12O6), ácido
+                        súlfúrico (H2SO4). Foca-te na sua constituição e considera o seu nome, ponto
+                        de fusão e ponto de ebulição.</li>
+                     </ol>
+                  </div>
+                  </a><div class="panel-footer"><a name="e1"> [</a><a href="#ind-ex">Voltar ao Índice de exercícios</a>] </div>
+               </div>
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <a name="e2">
+                     <h3 class="panel-title">Exercício Nº 2:
+            História de Portugal</h3>
+                  </a></div><a name="e2">
+                  <div class="panel-body">
+                     <p>Depois de descarregares a ontologia e a explorares um pouco no Protégé tenta
+                    responder com SPARQL às seguintes questões:</p>
+                     <ol class="a">
+                        <li>Quantos triplos existem na Ontologia?</li>
+                        <li>Que classes estão definidas?</li>
+                        <li>Que propriedades tem a classe "Rei"?</li>
+                        <li>Quantos reis aparecem na ontologia?</li>
+                        <li>Calcula uma tabela com o seu nome, data de nascimento e
+                        cognome.</li>
+                        <li>Acrescenta à tabela anterior a dinastia em que cada rei reinou.</li>
+                        <li>Qual a distribuição de reis pelas 4 dinastias?</li>
+                        <li>Lista os decobrimentos (sua descrição) por ordem cronológica.</li>
+                        <li>Lista as várias conquistas, nome e data, juntamento com o nome que
+                        reinava no momento.</li>
+                        <li>Calcula uma tabela com o nome, data de nascimento e número de mandatos
+                        de todos os presidentes portugueses.</li>
+                        <li>Quantos mandatos teve o presidente Sidónio Pais? Em que datas iniciaram
+                        e terminaram esses mandatos?</li>
+                        <li>Quais os nomes dos partidos políticos presentes na ontologia?</li>
+                        <li>Qual a distribuição dos militantes por cada partido político?</li>
+                        <li>Qual o partido com maior número de presidentes militantes?</li>
+                     </ol>
+                  </div>
+                  </a><div class="panel-footer"><a name="e2"> [</a><a href="#ind-ex">Voltar ao Índice de exercícios</a>] </div>
+               </div>
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <a name="e3">
+                     <h3 class="panel-title">Exercício Nº 3:
+            MusicBrainz</h3>
+                  </a></div><a name="e3">
+                  </a><div class="panel-body"><a name="e3">
+                     </a><p><a name="e3">Acedendo à interface web do SPARQL endpoint, </a><a href="http://dbtune.org/musicbrainz/snorql/">MusicBrainz SPARQL endpoint</a>, realiza
+                    as seguintes tarefas:</p>
+                     <ol class="a">
+                        <li>Obtem uma lista de todos os artistas com o seu nome, a sua descrição e a
+                    sua homepage;</li>
+                        <li>Ordena a lista por ordem alfabética de nome;</li>
+                        <li>Obtem uma lista dos nomes dos albuns do artista: "Repórter Estrábico";</li>
+                        <li>Quais os títulos dos albuns de autoria de "Bob Dylan";</li>
+                        <li>Com que artistas colaborou "Bob Dylan" nos seus albuns?</li>
+                     </ol>
+                  </div>
+                  <div class="panel-footer"> [<a href="#ind-ex">Voltar ao Índice de exercícios</a>] </div>
+               </div>
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <a name="e4">
+                     <h3 class="panel-title">Exercício Nº 4:
+            DBPedia</h3>
+                  </a></div><a name="e4">
+                  </a><div class="panel-body"><a name="e4">
+                     </a><p><a name="e4">Acedendo à interface web do SPARQL endpoint, </a><a href="https://dbpedia.org/sparql">DBPedia SPARQL endpoint</a>, realiza
+                    as seguintes tarefas:</p>
+                     <ol class="a">
+                        <li>Obtem uma tabela com os primeiros 100 artistas musicais, com as colunas
+                        nome e nota bigráfica;</li>
+                        <li>Obtem uma lista das obras de "Chuck Berry";</li>
+                     </ol>
+                  </div>
+                  <div class="panel-footer"> [<a href="#ind-ex">Voltar ao Índice de exercícios</a>] </div>
+               </div>
+            </div>
+            <div class="panel-footer"> 
+            Generated by rep-fichas-site app by jcr::
+            2018-03-19Z - 
+            20 fichas / 
+            44 exercícios 
+        </div>
+         </div>
+      </div>
+   
+
+</body></html>

@@ -6,60 +6,19 @@ var Pub = require('../controllers/pub')
 router.get('/', function (req, res, next) {
   res.render('index');
 });
-/*
-router.get('/mural', verificaAutenticacao, function (req, res) {
-  var d = new Date().toISOString().substr(0, 16)
-  mail = req.user.mail
-  role = req.user.role
 
-  Pub.list(mail, role)
-    .then(pubs => {
-      //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
-      if (role == "produtor") {
-        Pub.list_aux()
-          .then(publicacoes => {
-            var p = []
-            publicacoes.forEach(element => {
-              p.push(element)
-            });
-            pubs.forEach(element => {
-              p.push(element)
-            });
-            res.render('mural', { utilizador: req.user, pubs: p, d });
-          })
-      }
-      else {
-        res.render('mural', { utilizador: req.user, pubs, d });
-      }
-    })
-    .catch(erro => done(erro))
-});
-*/
 router.get('/mural', verificaAutenticacao, function (req, res) {
   var d = new Date().toISOString().substr(0, 16)
   mail = req.user.mail
   role = req.user.role
 
   if (Object.keys(req.query).length == 0) {
-    Pub.list(mail, role)
+    Pub.list()
       .then(pubs => {
-        //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
-        if (role == "produtor") {
-          Pub.list_aux()
-            .then(publicacoes => {
-              var p = []
-              publicacoes.forEach(element => {
-                p.push(element)
-              });
-              pubs.forEach(element => {
-                p.push(element)
-              });
-              res.render('mural', { utilizador: req.user, pubs: p, d,autor:0});
-            })
-        }
-        else {
+          pubs.forEach(pub=>{
+            pub.pub_rating=pub.pub_rating.toFixed(2);
+          })
           res.render('mural', { utilizador: req.user, pubs, d ,autor:0  });
-        }
       })
       .catch(erro => done(erro))
   }
@@ -68,94 +27,58 @@ router.get('/mural', verificaAutenticacao, function (req, res) {
     {
       var order=-1
     }
-    Pub.listOrder(mail, role,req.query.orderby,order)
+    Pub.listOrder(req.query.orderby,order)
       .then(pubs => {
-        //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
-        if (role == "produtor") {
-          Pub.list_aux(req.query.orderby,order)
-            .then(publicacoes => {
-              var p = []
-              publicacoes.forEach(element => {
-                p.push(element)
-              });
-              pubs.forEach(element => {
-                p.push(element)
-              });
-              res.render('mural', { utilizador: req.user, pubs: p, d });
-            })
-        }
-        else {
-          res.render('mural', { utilizador: req.user, pubs, d });
-        }
+        pubs.forEach(pub=>{
+          pub.pub_rating=pub.pub_rating.toFixed(2);
+        })
+        res.render('mural', { utilizador: req.user, pubs, d });
       })
       .catch(erro => done(erro))
   }
   else if (Object.keys(req.query).length == 1 && Object.keys(req.query).indexOf("recnome") == 0) {
-    Pub.list_by_title(mail, role, req.query.recnome)
+    Pub.list_by_title( req.query.recnome)
       .then(pubs => {
-        //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
-        if (role == "produtor") {
-          Pub.list_aux_by_title(mail, req.query.recnome)
-            .then(publicacoes => {
-              var p = []
-              publicacoes.forEach(element => {
-                p.push(element)
-              });
-              pubs.forEach(element => {
-                p.push(element)
-              });
-              res.render('mural', { utilizador: req.user, pubs: p, d });
-            })
-        }
-        else {
-          res.render('mural', { utilizador: req.user, pubs, d });
-        }
+        Pub.list_by_theme(req.query.recnome)
+        .then(publicacoes=>{
+          var p=[]
+          pubs.forEach(pub=>{
+            pub.pub_rating=pub.pub_rating.toFixed(2);
+          })
+          publicacoes.forEach(element=>{
+            if(!p.includes(element)){
+              p.push(element)
+            }
+          })
+          pubs.forEach(element=>{
+            if(!p.includes(element)){
+              p.push(element)
+            }
+          }) 
+          console.log(p)
+          res.render('mural', { utilizador: req.user, pubs:p, d });
+        })
+       
       })
       .catch(erro => done(erro))
   }
   else if (Object.keys(req.query).length == 1 && Object.keys(req.query).indexOf("data") == 0) {
-    Pub.list_by_date(mail, role, req.query.data)
+    Pub.list_by_date(req.query.data)
       .then(pubs => {
-        //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
-        if (role == "produtor") {
-          Pub.list_aux_by_date(mail, req.query.data)
-            .then(publicacoes => {
-              var p = []
-              publicacoes.forEach(element => {
-                p.push(element)
-              });
-              pubs.forEach(element => {
-                p.push(element)
-              });
-              res.render('mural', { utilizador: req.user, pubs: p, d });
-            })
-        }
-        else {
-          res.render('mural', { utilizador: req.user, pubs, d });
-        }
+        pubs.forEach(pub=>{
+          pub.pub_rating=pub.pub_rating.toFixed(2);
+        })
+        res.render('mural', { utilizador: req.user, pubs, d });
       })
       .catch(erro => done(erro))
   }
   else if (Object.keys(req.query).length == 2 && Object.keys(req.query).indexOf("data") != -1 && Object.keys(req.query).indexOf("recnome") != -1) {
-    Pub.list_by_date_and_title(mail, role, req.query.data, req.query.recnome)
+    Pub.list_by_date_and_title(req.query.data, req.query.recnome)
       .then(pubs => {
-        //tive de fazer isto para o produtor porque precisava de ir buscar os publicos e os proprios
-        if (role == "produtor") {
-          Pub.list_aux_by_date_and_title(mail, req.query.data, req.query.recnome)
-            .then(publicacoes => {
-              var p = []
-              publicacoes.forEach(element => {
-                p.push(element)
-              });
-              pubs.forEach(element => {
-                p.push(element)
-              });
-              res.render('mural', { utilizador: req.user, pubs: p, d });
-            })
-        }
-        else {
-          res.render('mural', { utilizador: req.user, pubs, d });
-        }
+         pubs.forEach(pub=>{
+          pub.pub_rating=pub.pub_rating.toFixed(2);
+        })
+        res.render('mural', { utilizador: req.user, pubs, d });
       })
       .catch(erro => done(erro))
   }

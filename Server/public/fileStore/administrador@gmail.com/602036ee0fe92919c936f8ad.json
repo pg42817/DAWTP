@@ -1,0 +1,74 @@
+[
+  {
+    "Número": "PG42837",
+    "Nome": "Joel Carvalho",
+    "Git": "https://github.com/joelccarvalho/DAW2020",
+    "tpc": [1,1,1,1,1,1,0,0]
+  },
+  {
+    "Número": "PG42832",
+    "Nome": "Guilherme Palumbo",
+    "Git": "https://github.com/pg42832/DAW2020_42832",
+    "tpc": [1,1,1,1,1,0,0,0]
+  },
+  {
+    "Número": "PG41097",
+    "Nome": "Ricardo Vaz",
+    "Git": "https://github.com/RicardoVaz1/DAW2020",
+    "tpc": [1,1,0,0,0,1,0,0]
+  },
+  {
+    "Número": "A85006",
+    "Nome": "Hugo Cardoso",
+    "Git": "https://github.com/Abjiri/DAW2020",
+    "tpc": [1,1,1,1,1,1,0,0]
+  },
+  {
+    "Número": "A84464",
+    "Nome": "Válter Carvalho",
+    "Git": "https://github.com/wurzy/DAW2020",
+    "tpc": [1,1,1,1,1,1,0,0]
+  },
+  {
+    "Número": "PG42852",
+    "Nome": "Vasco Ramos",
+    "Git": "https://github.com/vascoalramos/daw",
+    "tpc": [1,1,1,1,1,1,0,0]
+  },
+  {
+    "Número": "A84430",
+    "Nome": "Bruno Teixeira",
+    "Git": "https://github.com/Teixeira992/DAW2020.git",
+    "tpc": [1,1,1,1,1,1,0,0]
+  },
+  {
+    "Número": "A84442",
+    "Nome": "Diogo Ribeiro",
+    "Git": "https://github.com/ribeiropdiogo/DAW2020",
+    "tpc": [1,1,1,1,1,1,0,0]
+  },
+  {
+    "Número": "A83732",
+    "Nome": "Gonçalo Pinto",
+    "Git": "https://github.com/GRP99/DAW2020",
+    "tpc": [1,1,1,1,1,1,0,0]
+  },
+  {
+    "Número": "A85334",
+    "Nome": "Pedro Delgado",
+    "Git": "https://github.com/PedroPDelgado/DAW2020",
+    "tpc": [1,1,1,1,1,1,0,0]
+  },
+  {
+    "Número": "A84244",
+    "Nome": "Luís Cunha",
+    "Git": "https://github.com/luiscvnha/DAW2020",
+    "tpc": [1,1,1,1,1,1,0,0]
+  },
+  {
+    "Número": "A84197",
+    "Nome": "João Parente",
+    "Git": "https://github.com/Joao-Parente/DAW2020",
+    "tpc": [1,1,1,1,1,1,0,0]
+  }
+]

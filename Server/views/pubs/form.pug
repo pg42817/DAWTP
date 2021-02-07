@@ -48,7 +48,7 @@ block content
                         label.w3-text-blue
                             b SIP
                     .w3-col.s9
-                        input.w3-check(type="checkbox" name="SIP_check" checked="checked")
+                        input.w3-check(type="checkbox" id="checkbox_sip" name="SIP_check" checked="checked")(onclick="button_check()")
                 <br>
                 .w3-row.w3-margin-bottom
                     .w3-col.s3
@@ -65,7 +65,8 @@ block content
                         input.w3-input.w3-border.w3-light-grey(type='file' name='myFile' required)
             #extra_files
             br
-            button.w3-bar-item.w3-button.w3-blue-grey(type='button' onclick='extraFiles()') Adicionar ficheiro
+            button.w3-bar-item.w3-button.w3-blue-grey(type='button' style="display:none;" id="extrafile" onclick='extraFiles()') Adicionar ficheiro
             input.w3-bar-item.w3-button.w3-blue-grey(type='submit' value='Criar publicação' required)
         </form>
     </div>
+

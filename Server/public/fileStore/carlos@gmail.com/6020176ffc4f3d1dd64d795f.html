@@ -1,0 +1,282 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+      <meta charset="utf-8">
+      <title>Arquivo de Fichas Práticas do JCR</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="PRC2016-aferi%C3%A7%C3%A3o_ficheiros/bootstrap.css">
+   </head>
+   <body style="padding-top:50px;">
+      <div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+         <div class="container">
+            <div class="navbar-header">
+               <a href="http://www4.di.uminho.pt/~jcr/AULAS/didac/RepFichas/site/index.php" class="navbar-brand">Arquivo Fichas Práticas</a>
+               <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+                  <span class="icon-bar">
+                  <span class="icon-bar">
+                  <span class="icon-bar">
+               </span></span></span></button>
+            </div>
+            <div class="navbar-collapse collapse" id="navbar-main">
+               <ul class="nav navbar-nav">
+                  <li>
+                     <a href="http://www4.di.uminho.pt/~jcr/AULAS/didac/RepFichas/site/index-fichas.html">Fichas</a>
+                  </li>
+                  <li>
+                     <a href="http://www4.di.uminho.pt/~jcr/AULAS/didac/RepFichas/site/index-fichas-categ.html">Fichas/Tema</a>
+                  </li>
+               </ul>
+               <ul class="nav navbar-nav navbar-right">
+                  <li>
+                     <a href="http://www4.di.uminho.pt/~jcr/AULAS/didac/RepFichas/site/logs.html">Registo de Alterações</a>
+                  </li>
+               </ul>
+            </div>
+         </div>
+      </div>
+      <div class="container">
+         <div class="row">
+            <div class="col-sm-5 col-md-5">
+               <img class="img-responsive" src="PRC2016-aferi%C3%A7%C3%A3o_ficheiros/fichas.jpeg">
+            </div>
+            <div class="col-sm-7 col-md-7">
+               <h2>Ficha PRC2016-aferição</h2>
+               <h3>Aferição: OWL e SPARQL</h3>
+            </div>
+         </div>
+         <div class="panel panel-default">
+            <div class="panel-body">
+               <a name="ind-ex">
+               <p class="lead">Processamento e Representação de Conhecimento</p>
+               <p>
+		                </p><p>O objetivo desta ficha é testar os conhecimentos adquiridos ao longo do semestre sobre Web Semântica e as tecnologias a 
+		  ela associadas.</p>
+		             <p></p>
+               <div class="container">
+                  <table>
+                     <tbody>
+                        <tr>
+                           <td valign="top">
+                              <h3>Recursos:</h3>
+                           </td>
+                           <td>
+                        </td></tr>
+                        <tr>
+                           <td>
+                           </td><td>
+                              <div class="para"> Recursos disponíveis para a realização da ficha:</div>
+                              <br>
+                              <ul>
+			                              <li>
+                                    <a href="http://www4.di.uminho.pt/~jcr/AULAS/didac/RepFichas/site/datasets/Histria_de_Portugal.rdf">Ontologia sobre a História de Portugal.</a>
+                                 </li>
+		                            </ul>
+                           </td>
+                        </tr>
+                        <tr>
+                           <td>
+                              <h3>
+                Exercícios:
+              </h3>
+                           </td>
+                           <td>
+                        </td></tr>
+                        <tr>
+                           <td>
+                           </td><td>
+                              <ol>
+                                 <a name="ind-ex">
+                                 </a><li><a name="ind-ex">
+                                    </a><a href="#e1">Interpretação de OWL</a>
+                                 </li>
+                                 <a name="ind-ex">
+                                 </a><li><a name="ind-ex">
+                                    </a><a href="#e2">Interpretação de OWL (2)</a>
+                                 </li>
+                                 <a name="ind-ex">
+                                 </a><li><a name="ind-ex">
+                                    </a><a href="#e3">Especificação de OWL</a>
+                                 </li>
+                                 <a name="ind-ex">
+                                 </a><li><a name="ind-ex">
+                                    </a><a href="#e4">Modelação de uma ontologia</a>
+                                 </li>
+                                 <a name="ind-ex">
+                                 </a><li><a name="ind-ex">
+                                    </a><a href="#e5">Exploração de Ontologias com SPARQL: História de Portugal</a>
+                                 </li>
+                              </ol>
+                           </td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+               <hr>
+               </a><div class="panel panel-default"><a name="ind-ex">
+                  </a><div class="panel-footer"><a name="ind-ex">
+                     <p>Generated by xfichas app by jcr::2015-02-24</p>
+                     </a><p><a name="ind-ex">[</a><a href="http://www4.di.uminho.pt/~jcr/AULAS/didac/RepFichas/site/">Voltar ao índice de fichas</a>]</p>
+                  </div>
+               </div>
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <a name="e1">
+                     <h3 class="panel-title">Exercício Nº 1:
+            Interpretação de OWL</h3>
+                  </a></div><a name="e1">
+                  <div class="panel-body">
+				                 <p>Considere a seguinte especificção em OWL:</p>
+			                  <pre class="codigo">&lt;owl:Class rdf:ID="UM_Atleta"&gt;
+    &lt;rdfs:subClassOf&gt;
+        &lt;owl:Restriction&gt;
+            &lt;owl:allValuesFrom&gt;
+                &lt;owl:Class rdf:ID="atleta"/&gt;
+            &lt;/owl:allValuesFrom&gt;
+            &lt;owl:onProperty&gt;
+                &lt;owl:ObjectProperty rdf:ID="temAmigo"/&gt;
+            &lt;/owl:onProperty&gt;
+        &lt;/owl:Restriction&gt;
+    &lt;/rdfs:subClassOf&gt;
+    &lt;rdfs:subClassOf&gt;
+        &lt;owl:Restriction&gt;
+            &lt;owl:hasValue&gt;
+                &lt;universidade rdf:ID="UM"/&gt;
+            &lt;/owl:hasValue&gt;
+            &lt;owl:onProperty&gt;
+               &lt;owl:ObjectProperty rdf:ID="estudaEm"/&gt;
+            &lt;/owl:onProperty&gt;
+        &lt;/owl:Restriction&gt;
+    &lt;/rdfs:subClassOf&gt;
+    &lt;rdfs:subClassOf rdf:resource="#Atleta"/&gt;
+&lt;/owl:Class&gt;</pre>
+			                  <p>Analisa esta especificação que define um atleta da Universidade do Minho e descrece em português (língua natural)
+			    essa definição.</p>
+			               </div>
+                  </a><div class="panel-footer"><a name="e1"> [</a><a href="#ind-ex">Voltar ao Índice de exercícios</a>] </div>
+               </div>
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <a name="e2">
+                     <h3 class="panel-title">Exercício Nº 2:
+            Interpretação de OWL (2)</h3>
+                  </a></div><a name="e2">
+                  <div class="panel-body">
+	                    <p>Considere a seguinte especificção em numa sintaxe abstrata baseada em OWL:</p>
+	                    <pre class="codigo">    Class: Caloteiro
+        SubclassOf:
+            Pessoa AND
+            tem some Dívida</pre>
+	                    <p>Escreve uma frase em português que compreenda o significado contido nesta especificação.</p>
+	                 </div>
+                  </a><div class="panel-footer"><a name="e2"> [</a><a href="#ind-ex">Voltar ao Índice de exercícios</a>] </div>
+               </div>
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <a name="e3">
+                     <h3 class="panel-title">Exercício Nº 3:
+            Especificação de OWL</h3>
+                  </a></div><a name="e3">
+                  <div class="panel-body">
+	                    <p>Usando um sintaxe semelhante à do exercício 
+anterior (ou OWL/XML) para especificar uma estância de Ski como sendo 
+uma área rural que
+	        oferece pelo menos uma oportunidade para fazer Ski e tem no 
+mínimo dois meios mecânicos de elevação (elevadores, teleférico, 
+saca-rabos ou
+	        corda).
+	        Repara que área rural, Ski e meio mecânico devem ser classes.</p>
+	                 </div>
+                  </a><div class="panel-footer"><a name="e3"> [</a><a href="#ind-ex">Voltar ao Índice de exercícios</a>] </div>
+               </div>
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <a name="e4">
+                     <h3 class="panel-title">Exercício Nº 4:
+            Modelação de uma ontologia</h3>
+                  </a></div><a name="e4">
+                  <div class="panel-body">
+	                    <p>Utiliza o Protégé e a linguagem OWL DL para modelar o seguinte caso de estudo.</p>
+	                    <p>Descrição do caso: <i>O Turismo representa uma 
+atividade cada vez mais importante para a cidade de Braga. Como parte do
+	        Braga Digital, o município está à procura de aplicações 
+inovadoras que façam uso da conetividade WIFI, que vai sendo instalada, e
+ dos
+	        telemóveis, cada vez mais inteligentes. 
+	        Neste exercício vais especificar uma ontologia cujo domínio 
+será o Turismo na cidade de Braga. Esta ontologia deverá incluir 
+classes, "object
+	        properties", "data properties" e indivíduos (uma ontologia 
+povoada). A ideia é que a comunidade bracarense possa classificar 
+informação de
+	        acordo com a ontologia e torná-la acessível a outras aplicações
+ que possam ser usadas em telemóveis.</i>
+                     </p>
+	                    <p>Segue os seguintes passos na construção da tua ontologia:</p>
+	                    <ol class="a">
+	                       <li>Cria uma lista com as 10 a 20 atrações 
+turísticas mais importantes em Braga e arredores.
+	          Esta lista deverá incluir instituições (museus, monumentos, 
+etc), atividades e eventos (Semana Santa, Braga Romana, etc).
+	          Identifica a necessária infraestrutura de suporte aos 
+turistas de visita a Braga: restaurantes, hoteis, transportes, etc;</li>
+	                       <li>Cria uma hierarquia de classes e usa-a para classificares todas as instâncias que listaste na alínea anterior (tem atenção às
+	          propriedades das classes como a disjunção);</li>
+	                       <li>Especifica as "data properties" de cada 
+classe. Lembra-te de que as propriedades são herdades pelas subclasses e
+ por isso devem ser
+	          especificadas no nível mais alto da hierarquia. Depois de as 
+especificares, instancia-as para os indivíduos que deves ter criado 
+associados
+	          à primeira alínea;
+	          </li>
+	                       <li>Especifica as "object properties" ao nível 
+da classe e usa-as para relacionares os indivíduos na tua ontologia. Usa
+ cardinalidades
+	          quando necessário;</li>
+	                       <li>Um passeio turístico inclui pelo menos três atrações, todas dentro duma distância que se pode percorrer a pé desde o centro de
+	          turismo. Especifica a classe "PasseioTuristico" na tua ontologia;</li>
+	                       <li>Como podes definir tipos diferentes de turista na tua ontologia?</li>
+	                       <li>Bracara Augusta, Cidade Romana ou Cidade Barroca são alguns dos sinónimos usamos muitas vezes para referenciar Braga. Como podes
+	          representar isto na tua ontologia?</li>
+	                    </ol>
+	                 </div>
+                  </a><div class="panel-footer"><a name="e4"> [</a><a href="#ind-ex">Voltar ao Índice de exercícios</a>] </div>
+               </div>
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <a name="e5">
+                     <h3 class="panel-title">Exercício Nº 5:
+            Exploração de Ontologias com SPARQL: História de Portugal</h3>
+                  </a></div><a name="e5">
+                  <div class="panel-body">
+      		             <p>Depois de descarregares a ontologia e a explorares um pouco no Protégé tenta responder com SPARQL às seguintes questões:</p>
+      		             <ol class="a">
+      			               <li>Quantos triplos existem na Ontologia?</li>
+      			               <li>Que classes estão definidas?</li>
+      			               <li>Que propriedades tem a classe "Rei"?</li>
+      			               <li>Quantos reis aparecem na ontologia?</li>
+      			               <li>Calcula uma tabela com o seu nome, data de nascimento e cognome.</li>
+      			               <li>Acrescenta à tabela anterior a dinastia em que cada rei reinou.</li>
+      			               <li>Qual a distribuição de reis pelas 4 dinastias?</li>
+      			               <li>Lista os decobrimentos (sua descrição) por ordem cronológica.</li>
+      			               <li>Lista as várias conquistas, nome e data, juntamento com o nome que reinava no momento.</li>
+      			               <li>Calcula uma tabela com o nome, data de nascimento e número de mandatos de todos os presidentes portugueses.</li>
+      			               <li>Quantos mandatos teve o presidente Sidónio Pais? Em que datas iniciaram e terminaram esses mandatos?</li>
+      			               <li>Quais os nomes dos partidos políticos presentes na ontologia?</li>
+      			               <li>Qual a distribuição dos militantes por cada partido político?</li>
+      			               <li>Qual o partido com maior número de presidentes militantes?</li>
+      		             </ol>
+      	           </div>
+                  </a><div class="panel-footer"><a name="e5"> [</a><a href="#ind-ex">Voltar ao Índice de exercícios</a>] </div>
+               </div>
+            </div>
+            <div class="panel-footer"> 
+            Generated by rep-fichas-site app by jcr::
+            2016-05-16+01:00 - 
+            18 fichas / 
+            40 exercícios 
+        </div>
+         </div>
+      </div>
+   
+
+</body></html>
